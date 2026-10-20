@@ -1,0 +1,908 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}body{margin:0}img{max-width:100%}[hidden]{display:none!important}</style>
+</head>
+<body>
+<title>WTL Championship Rulebook</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="Official rulebook, SLOPE evaluation explainer and live SLOPE calculator for the WTL Championship 2026 by We Teach League.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chakra+Petch:wght@500;600;700&family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: sticky section nav over a two-column rulebook (TOC rail + text), then SLOPE explainer, then a two-pane calculator (inputs | result + team). */
+:root {
+  --bg: #f2f4f7;
+  --surface: #ffffff;
+  --sunk: #e8ecf1;
+  --fg: #131a24;
+  --muted: #586374;
+  --line: #d4dbe4;
+  --accent: #0a6c88;
+  --accent-soft: #d7edf3;
+  --gold: #8d6512;
+  --gold-soft: #f3e7c9;
+  --ok: #1d7a46;
+  --ok-soft: #d9f0e2;
+  --warn: #a2470f;
+  --warn-soft: #f8e1d1;
+  --font-display: "Chakra Petch", "Segoe UI", system-ui, sans-serif;
+  --font-body: "IBM Plex Sans", "Segoe UI", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, Consolas, monospace;
+  --radius: 6px;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0d1219; --surface: #141b25; --sunk: #1b2430; --fg: #e3e8ef; --muted: #96a2b3; --line: #2a3542;
+    --accent: #52c2df; --accent-soft: #123441; --gold: #e1b752; --gold-soft: #3a2f14;
+    --ok: #5fd08f; --ok-soft: #133524; --warn: #f39a63; --warn-soft: #3d2416; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0d1219; --surface: #141b25; --sunk: #1b2430; --fg: #e3e8ef; --muted: #96a2b3; --line: #2a3542;
+  --accent: #52c2df; --accent-soft: #123441; --gold: #e1b752; --gold-soft: #3a2f14;
+  --ok: #5fd08f; --ok-soft: #133524; --warn: #f39a63; --warn-soft: #3d2416; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { scroll-behavior: smooth; scroll-padding-top: 64px; }
+@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+body { background: var(--bg); color: var(--fg); font: 400 15px/1.6 var(--font-body); }
+body::before { content: ""; position: fixed; inset: 0 0 auto; height: env(safe-area-inset-top, 0px); z-index: 10; background: var(--surface); }
+a { color: var(--accent); text-underline-offset: 2px; }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+h1, h2, h3, h4 { font-family: var(--font-display); text-wrap: balance; line-height: 1.2; margin: 0; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+.eyebrow { font: 500 12px/1 var(--font-mono); letter-spacing: .12em; text-transform: uppercase; color: var(--muted); }
+.mono { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+
+/* Masthead */
+.masthead { background: var(--surface); border-bottom: 1px solid var(--line); }
+.masthead .wrap { padding-block: 40px 28px; display: grid; gap: 14px; }
+.masthead h1 { font-size: clamp(30px, 5vw, 48px); font-weight: 700; letter-spacing: -.01em; }
+.masthead h1 span { color: var(--accent); }
+.masthead p { margin: 0; max-width: 64ch; color: var(--muted); }
+.meta-row { display: flex; flex-wrap: wrap; gap: 8px; }
+.chip { display: inline-flex; align-items: center; gap: 6px; font: 500 12px/1 var(--font-mono); padding: 6px 9px; border: 1px solid var(--line); border-radius: 999px; color: var(--muted); background: var(--bg); }
+
+/* Sticky nav */
+.topnav { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 5; background: var(--surface); border-bottom: 1px solid var(--line); }
+.topnav .wrap { display: flex; gap: 4px; overflow-x: auto; padding-block: 0; }
+.topnav a { font: 600 14px/1 var(--font-display); letter-spacing: .04em; text-transform: uppercase; text-decoration: none; color: var(--muted); padding: 16px 12px 14px; border-bottom: 2px solid transparent; white-space: nowrap; }
+.topnav a:hover { color: var(--fg); }
+.topnav a.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+section.band { padding-block: 48px; }
+section.band + section.band { border-top: 1px solid var(--line); }
+.band-head { display: grid; gap: 8px; margin-bottom: 28px; }
+.band-head h2 { font-size: clamp(24px, 3.4vw, 32px); }
+.band-head p { margin: 0; color: var(--muted); max-width: 70ch; }
+
+/* Rulebook */
+.rules-grid { display: grid; grid-template-columns: 1fr; gap: 32px; }
+@media (min-width: 960px) { .rules-grid { grid-template-columns: 220px minmax(0, 1fr); } }
+.toc { display: none; }
+@media (min-width: 960px) {
+  .toc { display: block; position: sticky; top: calc(env(safe-area-inset-top, 0px) + 72px); align-self: start; max-height: calc(100vh - 96px); overflow-y: auto; font-size: 13px; }
+}
+.toc ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 2px; }
+.toc a { display: block; text-decoration: none; color: var(--muted); padding: 4px 8px; border-radius: 4px; }
+.toc a:hover { color: var(--fg); background: var(--sunk); }
+.toc .toc-ch > a { color: var(--fg); font-weight: 600; margin-top: 8px; }
+.toc .toc-sub a { padding-left: 18px; }
+.rules { min-width: 0; max-width: 78ch; }
+.chapter { display: grid; gap: 18px; padding-bottom: 32px; }
+.chapter + .chapter { padding-top: 32px; border-top: 1px dashed var(--line); }
+.chapter > h3 { font-size: 24px; display: flex; gap: 12px; align-items: baseline; }
+.num { font-family: var(--font-mono); font-size: .72em; color: var(--accent); font-weight: 500; }
+.sub { display: grid; gap: 10px; }
+.sub > h4 { font-size: 17px; font-weight: 600; display: flex; gap: 10px; align-items: baseline; }
+.rule { display: grid; grid-template-columns: 4.6em minmax(0, 1fr); gap: 10px; margin: 0; }
+.rule .rid { font: 500 12.5px/1.9 var(--font-mono); color: var(--muted); font-variant-numeric: tabular-nums; }
+.rule p { margin: 0; }
+.rule.nested { padding-left: 1.6em; }
+.rules p.plain { margin: 0; }
+.note { margin: 0; padding: 12px 14px; background: var(--sunk); border-radius: var(--radius); color: var(--muted); font-size: 14px; }
+.tablebox { overflow-x: auto; }
+table.data { border-collapse: collapse; width: 100%; font-size: 14px; }
+table.data th, table.data td { text-align: left; padding: 7px 10px; border-bottom: 1px solid var(--line); }
+table.data th { font: 500 11.5px/1.3 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+table.data td.n { font-family: var(--font-mono); font-variant-numeric: tabular-nums; text-align: right; }
+table.data th.n { text-align: right; }
+.roles { display: flex; flex-wrap: wrap; gap: 6px; margin: 0; padding: 0; list-style: none; counter-reset: r; }
+.roles li { counter-increment: r; font: 500 13px/1 var(--font-mono); padding: 7px 10px; border: 1px solid var(--line); border-radius: 4px; background: var(--surface); }
+.roles li::before { content: counter(r) " · "; color: var(--muted); }
+
+/* Point tables */
+.div-tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.seg { font: 600 13px/1 var(--font-display); letter-spacing: .03em; padding: 9px 12px; border: 1px solid var(--line); background: var(--surface); color: var(--muted); border-radius: 4px; cursor: pointer; }
+.seg:hover { color: var(--fg); }
+.seg[aria-pressed="true"], .seg[aria-selected="true"] { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.pt-card { border: 1px solid var(--line); border-radius: var(--radius); background: var(--surface); overflow: hidden; }
+.pt-card header { padding: 12px 14px; border-bottom: 1px solid var(--line); display: flex; flex-wrap: wrap; justify-content: space-between; gap: 6px 16px; align-items: baseline; }
+.pt-card header strong { font-family: var(--font-display); font-size: 16px; }
+.pt-card header span { font-size: 13px; color: var(--muted); }
+.pt-cols { columns: 2 220px; column-gap: 0; }
+.pt-row { break-inside: avoid; display: flex; justify-content: space-between; gap: 12px; padding: 7px 14px; border-bottom: 1px solid var(--line); font-size: 14px; }
+.pt-row b { font-family: var(--font-mono); font-weight: 500; color: var(--gold); }
+
+/* SLOPE */
+.slope-grid { display: grid; gap: 24px; grid-template-columns: 1fr; }
+@media (min-width: 900px) { .slope-grid { grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr); } }
+.prose { display: grid; gap: 14px; max-width: 68ch; min-width: 0; }
+.prose p { margin: 0; }
+.prose h3 { font-size: 19px; margin-top: 8px; }
+.vars { display: grid; grid-template-columns: auto 1fr; gap: 6px 14px; margin: 0; }
+.vars dt { font: 500 15px/1.6 var(--font-mono); color: var(--accent); }
+.vars dd { margin: 0; }
+.formula-card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; display: grid; gap: 16px; align-self: start; min-width: 0; }
+.formula { font: 400 15px/1.8 var(--font-mono); overflow-x: auto; white-space: nowrap; padding: 12px 14px; background: var(--sunk); border-radius: 4px; }
+.formula var { font-style: italic; color: var(--accent); }
+.formula .frac { display: inline-flex; flex-direction: column; vertical-align: middle; text-align: center; line-height: 1.2; font-size: .9em; margin: 0 2px; }
+.formula .frac > span:first-child { border-bottom: 1px solid currentColor; padding: 0 3px; }
+.formula sup { font-size: .72em; }
+.pen-table td.n, .pen-table th.n { text-align: right; }
+.doc-links { display: flex; flex-wrap: wrap; gap: 10px; }
+.btn { display: inline-flex; align-items: center; gap: 8px; font: 600 14px/1 var(--font-display); letter-spacing: .03em; padding: 11px 14px; border-radius: 4px; border: 1px solid var(--accent); background: var(--accent); color: var(--surface); text-decoration: none; cursor: pointer; }
+.btn.ghost { background: transparent; color: var(--accent); }
+.btn.small { padding: 8px 10px; font-size: 13px; }
+.btn:hover { filter: brightness(1.08); }
+
+/* Calculator */
+.calc { display: grid; gap: 24px; grid-template-columns: 1fr; }
+@media (min-width: 980px) { .calc { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); } }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: var(--radius); padding: 20px; display: grid; gap: 18px; align-content: start; min-width: 0; }
+.panel h3 { font-size: 18px; }
+fieldset { border: 0; margin: 0; padding: 0; display: grid; gap: 8px; min-width: 0; }
+legend { font: 600 13px/1.3 var(--font-display); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); padding: 0; margin-bottom: 8px; }
+label.lab { font-size: 13px; color: var(--muted); display: grid; gap: 4px; }
+input[type="text"], input[type="number"], select { font: 400 15px/1.2 var(--font-body); color: var(--fg); background: var(--bg); border: 1px solid var(--line); border-radius: 4px; padding: 9px 10px; width: 100%; min-width: 0; }
+input[type="number"] { font-family: var(--font-mono); }
+.row { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); }
+.row.rank { grid-template-columns: 1.4fr 1fr 1fr; }
+.hint { font-size: 12.5px; color: var(--muted); margin: 0; }
+.seg-group { display: flex; flex-wrap: wrap; gap: 6px; }
+.seg-group input { position: absolute; opacity: 0; pointer-events: none; }
+.seg-group label { font: 600 13px/1 var(--font-display); letter-spacing: .03em; padding: 10px 12px; border: 1px solid var(--line); border-radius: 4px; cursor: pointer; color: var(--muted); background: var(--surface); }
+.seg-group input:checked + label { background: var(--accent); border-color: var(--accent); color: var(--surface); }
+.seg-group input:focus-visible + label { outline: 2px solid var(--accent); outline-offset: 2px; }
+.otp { display: grid; grid-template-columns: 1fr 90px; gap: 12px; align-items: center; }
+input[type="range"] { width: 100%; accent-color: var(--accent); }
+.check { display: flex; gap: 8px; align-items: center; font-size: 14px; }
+.check input { width: 16px; height: 16px; accent-color: var(--accent); }
+
+.result { display: grid; gap: 14px; }
+.score { display: flex; flex-wrap: wrap; gap: 12px 24px; align-items: flex-end; }
+.score .big { font: 700 clamp(40px, 6vw, 56px)/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.score .big small { font-size: .38em; color: var(--muted); font-weight: 600; margin-left: 4px; }
+.score .rank-eq { font: 500 15px/1.3 var(--font-mono); color: var(--muted); }
+.points { display: inline-grid; place-items: center; min-width: 84px; padding: 10px 12px; border-radius: var(--radius); background: var(--gold-soft); color: var(--gold); text-align: center; }
+.points b { font: 700 32px/1 var(--font-display); }
+.points span { font: 500 11px/1.2 var(--font-mono); letter-spacing: .08em; text-transform: uppercase; }
+.pill { display: inline-flex; gap: 6px; align-items: center; font: 500 12px/1 var(--font-mono); padding: 6px 9px; border-radius: 999px; }
+.pill.ok { background: var(--ok-soft); color: var(--ok); }
+.pill.warn { background: var(--warn-soft); color: var(--warn); }
+.pill.info { background: var(--accent-soft); color: var(--accent); }
+.breakdown { margin: 0; display: grid; grid-template-columns: 1fr auto; gap: 0; font-size: 14px; }
+.breakdown dt, .breakdown dd { padding: 6px 0; border-bottom: 1px solid var(--line); margin: 0; }
+.breakdown dd { font-family: var(--font-mono); font-variant-numeric: tabular-nums; text-align: right; padding-left: 12px; }
+.actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+
+.team-head { display: flex; flex-wrap: wrap; gap: 8px 16px; justify-content: space-between; align-items: center; }
+.tpe { display: flex; flex-wrap: wrap; gap: 10px 20px; align-items: center; padding: 14px; border-radius: var(--radius); background: var(--sunk); }
+.tpe .big { font: 700 34px/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.tpe .big small { font-size: .45em; color: var(--muted); }
+.meter { flex: 1 1 180px; display: grid; gap: 6px; }
+.meter-track { position: relative; height: 8px; background: var(--line); border-radius: 4px; }
+.meter-band { position: absolute; top: 0; bottom: 0; background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 4px; }
+.meter-mark { position: absolute; top: -4px; width: 3px; height: 16px; background: var(--fg); border-radius: 2px; transform: translateX(-1px); }
+.meter-scale { display: flex; justify-content: space-between; font: 500 11px/1 var(--font-mono); color: var(--muted); }
+table.team td { vertical-align: middle; }
+table.team select { padding: 5px 6px; font-size: 13px; width: auto; }
+table.team .x { background: none; border: 0; color: var(--muted); cursor: pointer; font-size: 18px; line-height: 1; padding: 4px 6px; }
+table.team .x:hover { color: var(--warn); }
+table.team tr.example td { color: var(--muted); }
+.checks { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; font-size: 14px; }
+.checks li { display: grid; grid-template-columns: 52px 1fr; gap: 10px; align-items: baseline; }
+.checks .tag { font: 600 11px/1 var(--font-mono); letter-spacing: .06em; text-transform: uppercase; padding: 4px 0; text-align: center; border-radius: 3px; }
+.checks .tag.ok { background: var(--ok-soft); color: var(--ok); }
+.checks .tag.warn { background: var(--warn-soft); color: var(--warn); }
+.empty { padding: 18px; text-align: center; color: var(--muted); border: 1px dashed var(--line); border-radius: var(--radius); font-size: 14px; }
+
+footer.foot { border-top: 1px solid var(--line); background: var(--surface); }
+footer.foot .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; gap: 8px 24px; justify-content: space-between; font-size: 13px; color: var(--muted); }
+</style>
+
+<header class="masthead">
+  <div class="wrap">
+    <div class="eyebrow">We Teach League · Official Rules</div>
+    <h1>WTL Championship <span>2026</span> Rulebook</h1>
+    <p>The full rules for the WTL Championship 2026, how SLOPE player evaluations work, and a live calculator that turns your ranked history into a point value and a team total.</p>
+    <div class="meta-row">
+      <span class="chip">NA · Div 1–3</span>
+      <span class="chip">EU · Div 1–2</span>
+      <span class="chip">Fridays 8pm EST / CET</span>
+      <span class="chip">Bo3 · Finals Bo5</span>
+      <span class="chip">Fearless draft</span>
+    </div>
+  </div>
+</header>
+
+<nav class="topnav" aria-label="Sections">
+  <div class="wrap">
+    <a href="#rules" data-nav="rules">Rulebook</a>
+    <a href="#slope" data-nav="slope">SLOPE</a>
+    <a href="#calculator" data-nav="calculator">Calculator</a>
+  </div>
+</nav>
+
+<main>
+<!-- ===================== RULEBOOK ===================== -->
+<section class="band" id="rules">
+  <div class="wrap">
+    <div class="band-head">
+      <div class="eyebrow">Section A</div>
+      <h2>Rulebook</h2>
+      <p>By participating in the league, players acknowledge that they have read and understand these rules in their entirety. Source: <a href="https://docs.google.com/document/d/1Qu6pscRUl_iEMHQSeYPh40HkourK8NhKNg7LbW2ugCQ/edit?tab=t.0" target="_blank" rel="noopener">original Google Doc</a>.</p>
+    </div>
+
+    <div class="rules-grid">
+      <aside class="toc" aria-label="Rulebook contents">
+        <ol>
+          <li class="toc-ch"><a href="#r0">0.0 Introduction</a></li>
+          <li class="toc-sub"><a href="#r0-1">0.1 Out of Game Behavior</a></li>
+          <li class="toc-sub"><a href="#r0-2">0.2 In Game Behavior</a></li>
+          <li class="toc-ch"><a href="#r1">1.0 Eligibility &amp; Ratings</a></li>
+          <li class="toc-sub"><a href="#r1-1">1.1 Player Eligibility</a></li>
+          <li class="toc-sub"><a href="#r1-2">1.2 Player Ratings</a></li>
+          <li class="toc-ch"><a href="#r2">2.0 Divisions</a></li>
+          <li class="toc-sub"><a href="#r2-1">2.1 Accepted Teams</a></li>
+          <li class="toc-sub"><a href="#r2-2">2.2 Team Point Evaluations</a></li>
+          <li class="toc-sub"><a href="#r2-3">2.3 TPE Limits</a></li>
+          <li class="toc-ch"><a href="#r3">3.0 Roster Changes</a></li>
+          <li class="toc-sub"><a href="#r3-1">3.1 Substitutions &amp; Announcements</a></li>
+          <li class="toc-sub"><a href="#r3-2">3.2 Other Roster Stipulations</a></li>
+          <li class="toc-ch"><a href="#r4">4.0 Pauses, Disconnects, Remakes</a></li>
+          <li class="toc-sub"><a href="#r4-1">4.1 Pauses and Breaks</a></li>
+          <li class="toc-sub"><a href="#r4-2">4.2 Disconnects</a></li>
+          <li class="toc-sub"><a href="#r4-3">4.3 Remakes</a></li>
+          <li class="toc-ch"><a href="#r5">5.0 Format of Play</a></li>
+          <li class="toc-sub"><a href="#r5-1">5.1 Voice Channels</a></li>
+          <li class="toc-sub"><a href="#r5-2">5.2 Format of Games</a></li>
+          <li class="toc-sub"><a href="#r5-3">5.3 Draft</a></li>
+          <li class="toc-sub"><a href="#r5-4">5.4 Side Selection</a></li>
+          <li class="toc-sub"><a href="#r5-5">5.5 Schedules</a></li>
+          <li class="toc-sub"><a href="#r5-6">5.6 Tie-breaking Format</a></li>
+        </ol>
+      </aside>
+
+      <article class="rules">
+        <!-- 0.0 -->
+        <div class="chapter" id="r0">
+          <h3><span class="num">0.0</span>Introduction</h3>
+          <p class="plain">The following rules are for the WTL Championship 2026 associated with We Teach League. By participating in the league, players are acknowledging that they have read and understand the rules in their entirety.</p>
+
+          <div class="sub" id="r0-1">
+            <h4><span class="num">0.1</span>Out of Game Behavior</h4>
+            <div class="rule"><span class="rid">0.1.1</span><p>Any harassment or personal attacks or any kind will result in penalties for the player(s) in question depending on the severity of the acts. This includes but is not limited to: bullying, racism, personal insults, and offensive language.</p></div>
+            <div class="rule"><span class="rid">0.1.2</span><p>Disrespectfulness of any kind will not be tolerated).</p></div>
+            <div class="rule"><span class="rid">0.1.3</span><p>Not safe for work content of any kind has no place in the discord.</p></div>
+            <div class="rule"><span class="rid">0.1.4</span><p>Arguing with staff decisions will result in a warning. Inquiring about interpretation or implementation of a rule is allowed, as long as it is not in regards to a punishment that was handed down.</p></div>
+            <div class="rule"><span class="rid">0.1.5</span><p>Team names, team logos, and player names must be appropriate. Players will be asked by admins to change a team name, a team logo, or player names if they are deemed inappropriate.</p></div>
+          </div>
+
+          <div class="sub" id="r0-2">
+            <h4><span class="num">0.2</span>In Game Behavior</h4>
+            <div class="rule"><span class="rid">0.2.1</span><p>Emotes that can be muted in-game (e.g., emote wheel, mastery flash, situational emotes for first blood) are allowed to be used. Dancing and laughing are also allowed. If bothered by these emotes, players can mute them through their settings (dancing and laughing are muted by muting chat).</p></div>
+            <div class="rule"><span class="rid">0.2.2</span><p>All chat should only be used in a sportsmanlike manner and when warranted. E.g., “ggwp,” “glhf”. Mean-spirited all chat usage may result in game suspensions for the offending player(s).</p></div>
+            <div class="rule"><span class="rid">0.2.3</span><p>If any situations come up during game time (eligibility questions, rule violations, unsportsmanlike behavior in the lobby, etc.), do not play the game. Captains should ping one of the officials on the discord server.</p></div>
+            <div class="rule"><span class="rid">0.2.4</span><p>Whenever a new or reworked champion is released, they will not be available in league matches until one (1) patch after the champion is released.</p></div>
+            <div class="rule"><span class="rid">0.2.5</span><p>In order to participate in an official match for a team, players must be in the discord server and be properly registered on that team. The onus is on the opposing captain to check that the players in their lobby are registered on the approved roster lists.</p></div>
+            <div class="rule"><span class="rid">0.2.6</span><p>The matches will take place every Friday at 8pm (EST for NA and CET for EU). The captains are free to schedule their matches at another time, but it must be approved by both captains. Teams must be willing to field substitute players if need be.</p></div>
+            <div class="rule"><span class="rid">0.2.7</span><p>Matches must be played five (5) vs. five (5). If the initial five (5) players for each team are not present at the scheduled match time, see the table below:</p></div>
+            <div class="tablebox">
+              <table class="data" style="max-width: 460px">
+                <thead><tr><th>Time late to match</th><th>Punishment</th></tr></thead>
+                <tbody>
+                  <tr><td class="mono">5 minutes</td><td>Loss of 1st ban</td></tr>
+                  <tr><td class="mono">10 minutes</td><td>Loss of 1st two bans</td></tr>
+                  <tr><td class="mono">20 minutes</td><td>Loss of 1st game</td></tr>
+                  <tr><td class="mono">30 minutes</td><td>Loss of whole match/series</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <p class="note">Please note that captains are encouraged to enforce these punishments to incentivise respect and sportsmanship, but not obligated to do so.</p>
+          </div>
+        </div>
+
+        <!-- 1.0 -->
+        <div class="chapter" id="r1">
+          <h3><span class="num">1.0</span>Eligibility &amp; Player Ratings</h3>
+          <div class="sub" id="r1-1">
+            <h4><span class="num">1.1</span>Player Eligibility</h4>
+            <div class="rule"><span class="rid">1.1.1</span><p>All players must play on the account that is listed as the player’s main account on the roster sheet (unless given permission otherwise).</p></div>
+            <div class="rule"><span class="rid">1.1.2</span><p>Players must report all accounts that are level 30 or higher. If it is discovered that a player does not disclose all of their accounts, the player, their captain, and their team will be punished.</p></div>
+          </div>
+          <div class="sub" id="r1-2">
+            <h4><span class="num">1.2</span>Player Ratings</h4>
+            <div class="rule"><span class="rid">1.1.2</span><p>Evaluation will be made with our SLOPE system (Standardized Level Of Play Estimation) which is an estimation calculated with many variables including Current rank, Peak rank, Role, amount of games played, champions played, etc… See this file for in depth explanations: <a href="https://drive.google.com/file/d/1ss4DqESf0VN2vPcBvnPUsJRWD0nqzJhL/view" target="_blank" rel="noopener">SLOPE.pdf</a> and this one to calculate your own SLOPE rating with the coded formula: <a href="https://colab.research.google.com/drive/115SeCJfrsuFeppZrprDW_tJcKFyIaOHo?usp=sharing" target="_blank" rel="noopener">SLOPE_Calc.ipynb</a> (all you have to do click the play button on the top left and answer the questions).</p></div>
+            <p class="note">The website with the integrated code, including the full team rating, is the <a href="#calculator">SLOPE Calculator</a> on this page.</p>
+            <p class="plain">Point values by division (each tier division covers 0–99 LP; Master brackets are total LP):</p>
+            <div class="div-tabs" role="tablist" aria-label="Division point table" id="ptTabs"></div>
+            <div id="ptTable"></div>
+            <div class="rule"><span class="rid">1.2.1</span><p>All players will receive a numerical point rating according to the table above. Players may climb throughout the season without it affecting their point value (unless it is clear that a player was rank-sitting, in which case staff has the discretion to adjust point values upwards).</p></div>
+            <div class="rule"><span class="rid">1.2.2</span><p>There will be no in-season climbing caps.</p></div>
+            <div class="rule"><span class="rid">1.2.3</span><p>If we find any player to be manipulating their evaluation in any way (rank sitting, playing on hidden account…), the offending player will be banned from the league and the captain will receive a formal warning or be refused entry in the league altogether.</p></div>
+            <div class="rule"><span class="rid">1.2.4</span><p>Each team may have up to one player below the point bracket who will be worth 1 point. (This is to accommodate any team that is already made prior to the event, but isn’t recommended if you are building a team for the event.)</p></div>
+          </div>
+        </div>
+
+        <!-- 2.0 -->
+        <div class="chapter" id="r2">
+          <h3><span class="num">2.0</span>Divisions</h3>
+          <div class="sub" id="r2-1">
+            <h4><span class="num">2.1</span>Accepted Teams</h4>
+            <div class="rule"><span class="rid">2.1.1</span><p>All teams must consist of at least 6 players. Teams may have a maximum of 10 players.</p></div>
+            <div class="rule"><span class="rid">2.1.2</span><p>The league will accept at most 8 total teams.</p></div>
+          </div>
+          <div class="sub" id="r2-2">
+            <h4><span class="num">2.2</span>Evaluating Teams’ Point Evaluations</h4>
+            <div class="rule"><span class="rid">2.2.1</span><p>All accepted players will be assigned a point value based on the stipulations outlined in [2.2.2]. A team’s point evaluation (TPE) is determined by adding the assigned point values of the 5 starters on the roster, known for the rest of this document as TPE players. The substitute players may not be at a higher evaluation from the starter.</p></div>
+            <div class="rule"><span class="rid">2.2.3</span><p>A player cannot change his role at any point post-registration. However, a player can be registered twice in a team (starter Top, substitute ADC for example) and will receive 2 SLOPE evaluations.</p></div>
+          </div>
+          <div class="sub" id="r2-3">
+            <h4><span class="num">2.3</span>Teams’ Point Evaluation Limits</h4>
+            <div class="rule"><span class="rid">2.3.1</span><p>TPE limits are as follows:</p></div>
+            <div class="tablebox">
+              <table class="data" style="max-width: 420px">
+                <thead><tr><th>Division</th><th class="n">TPE range</th></tr></thead>
+                <tbody id="tpeRows"></tbody>
+              </table>
+            </div>
+            <div class="rule nested"><span class="rid">2.3.1.1</span><p>This is a soft cap and the league holds the right to accept or deny any team with the goal to have as many teams competing while holding our standards regarding competitive integrity.</p></div>
+            <div class="rule"><span class="rid">2.3.2</span><p>Substitutes must be below the point evaluation of their starting player.</p></div>
+            <div class="rule"><span class="rid">2.3.3</span><p>3 out of the 5 starting players of each team must be a member of the WTL academies. The remaining 2 may be non-members. This rule will keep being applied for the full duration of the event.</p></div>
+          </div>
+        </div>
+
+        <!-- 3.0 -->
+        <div class="chapter" id="r3">
+          <h3><span class="num">3.0</span>Roster Changes</h3>
+          <div class="sub" id="r3-1">
+            <h4><span class="num">3.1</span>Mid-Match Substitutions and Roster Announcements</h4>
+            <div class="rule"><span class="rid">3.1.1</span><p>Substitute players already on a team’s roster are allowed to play in any given game.</p></div>
+            <div class="rule"><span class="rid">3.1.2</span><p>Captains should confirm what their roster will be at least 24 hours in advance and post it in the roster announcement channel.</p></div>
+            <div class="rule nested"><span class="rid">3.1.2.1</span><p>If a team plans on making substitutions during a match, the sub needs to be on the announced roster and it must be announced in which games they will be playing in the announcement mentioned in [3.1.2].</p></div>
+            <div class="rule nested"><span class="rid">3.1.2.2</span><p>The announced roster must be between 5 and 7 players.</p></div>
+            <div class="rule nested"><span class="rid">3.1.2.3</span><p>If any last minute change must be made, the team may change it, but must give 10 additional minutes to the enemy team to prepare and will lose two bans during the first ban phase for all games in which the roster isn’t what was announced 24 hours before the game.</p></div>
+          </div>
+          <div class="sub" id="r3-2">
+            <h4><span class="num">3.2</span>Other Roster Stipulations</h4>
+            <div class="rule"><span class="rid">3.2.1</span><p>If a player is removed from a team for rule violations or any other reason, that player’s team will have 1 week from the league’s announcement of the ruling to fill that player's spot on that team’s roster. The new player must be of equal of lower point value.</p></div>
+            <div class="rule"><span class="rid">3.2.2</span><p>An individual player is only allowed to be registered on 1 roster at a time as a starter and may be a sub in another team from another division.</p></div>
+          </div>
+        </div>
+
+        <!-- 4.0 -->
+        <div class="chapter" id="r4">
+          <h3><span class="num">4.0</span>Pauses, Disconnects, Remakes, Forfeits</h3>
+          <div class="sub" id="r4-1">
+            <h4><span class="num">4.1</span>Pauses and Breaks</h4>
+            <div class="rule"><span class="rid">4.1.1</span><p>If a player disconnects, or if any serious issue occurs, the game can be paused for up to ten (10) minutes by each team per individual game. If the pause surpasses ten (10) total minutes of pause time from a singular team, the game must unpause and be played out or the offending team must forfeit.</p></div>
+            <div class="rule"><span class="rid">4.1.2</span><p>Teams may not pause during a fight or right before a fight will begin. Teams may not pause in the middle of combat. Both captains should confirm they are ready before the game is unpaused.</p></div>
+            <div class="rule nested"><span class="rid">4.1.2.1</span><p>A “fight” is defined as a sequence in the game where at least 2 players are in active combat with one another. The phrase “before a fight” refers to an instance where it is clear that a fight will break out within a few seconds (ex: A jungler starting a gank or a scuttle crab contest).</p></div>
+            <div class="rule"><span class="rid">4.1.3</span><p>For games after the first game of a series, all players should be in the lobby and the draft should start no later than fifteen (15) minutes following the conclusion of the previous game. Games should start no more than five (5) minutes after the draft finishes.</p></div>
+          </div>
+          <div class="sub" id="r4-2">
+            <h4><span class="num">4.2</span>Disconnects</h4>
+            <p class="plain">If teams run into unfixable problems, such as a power or internet outage, the captain should contact both the other captain and the admin team. If the issue is deemed fixable, the game will not be remade or postponed. The <span class="mono">/pause</span> function is approved for use during these situations. If the other captain is in agreement, teams may surpass their originally allotted ten (10) minutes of pause time.</p>
+          </div>
+          <div class="sub" id="r4-3">
+            <h4><span class="num">4.3</span>Remakes</h4>
+            <div class="rule"><span class="rid">4.3.1</span><p>Unless both parties are experiencing massive server lag and admins deem the game unplayable – remakes will not be given. Natural disasters or life-threatening situations are the only other instances where a remake may be considered. Decisions will be made by the admin team once they understand the situation.</p></div>
+            <div class="rule"><span class="rid">4.3.2</span><p>Remakes are not permitted if a player incorrectly selects their runes or summoner spells.</p></div>
+          </div>
+        </div>
+
+        <!-- 5.0 -->
+        <div class="chapter" id="r5">
+          <h3><span class="num">5.0</span>Format of Play</h3>
+          <div class="sub" id="r5-1">
+            <h4><span class="num">5.1</span>Voice Channels</h4>
+            <div class="rule"><span class="rid">5.1.1</span><p>All registered players must be in the Discord server with the proper naming convention.</p></div>
+            <div class="rule"><span class="rid">5.1.2</span><p>Teams must play in their designated Discord voice channel for all matches. The voice channels are locked to just players.</p></div>
+          </div>
+          <div class="sub" id="r5-2">
+            <h4><span class="num">5.2</span>Format of Games</h4>
+            <div class="rule"><span class="rid">5.2.1</span><p>All matches should be played in custom lobbies with the abbreviations as the name and “WTL123” as the password. (ex: SKY vs SBD, pw:ACL123)</p></div>
+            <div class="rule"><span class="rid">5.2.2</span><p>All matches are played in a best-of-3 format, except for finals, which will be a best-of-5.</p></div>
+            <div class="rule"><span class="rid">5.2.4</span><p>All the lobbies must be open for any player, coach, manager or team owner that wishes to spectate the match.</p></div>
+            <div class="rule"><span class="rid">5.2.5</span><p>Any member of the league may stream and cast the game on twitch, but must give their twitch link in the appropriate channel in the discord server.</p></div>
+          </div>
+          <div class="sub" id="r5-3">
+            <h4><span class="num">5.3</span>Draft</h4>
+            <div class="rule"><span class="rid">5.3.1</span><p>All matches will use the “Fearless” draft format and must be done in <a href="https://drafter.lol" target="_blank" rel="noopener">Drafter.lol</a>.</p></div>
+            <div class="rule nested"><span class="rid">5.3.1.1</span><p>After the draft is completed, each team must specify the role of each champion during the role confirmation phase (in Drafter.lol).</p></div>
+            <div class="rule"><span class="rid">5.3.2</span><p>In the game lobby, all players must line up in the standard order that follows the roles they intend to play before starting the draft.</p></div>
+            <ol class="roles"><li>Top</li><li>Jungle</li><li>Mid</li><li>Bottom</li><li>Support</li></ol>
+          </div>
+          <div class="sub" id="r5-4">
+            <h4><span class="num">5.4</span>Side Selection</h4>
+            <div class="rule"><span class="rid">5.4.1</span><p>Side selection is chosen through a coin flip. Both captains shall go in the coin flip channel where one captain will flip a coin on this website or simply on google. The captain that won the coin flip can choose between Red or Blue side. All games after the first are the loser's choice: the team that lost the most recent game has side selection in the next game.</p></div>
+            <div class="rule"><span class="rid">5.4.2</span><p>Playoff side selection is determined by seeding. The higher seed has selection for the first game of a series throughout the duration of the playoffs.</p></div>
+            <div class="rule"><span class="rid">5.4.3</span><p>In the playoffs, the team with side selection of the first game must communicate their decision at least twenty four (24) hours prior to the start of the match with their roster. If this team does not decide on a side by this time, the side selection will be decided like in regular season with a coin flip.</p></div>
+          </div>
+          <div class="sub" id="r5-5">
+            <h4><span class="num">5.5</span>Schedules</h4>
+            <div class="rule"><span class="rid">5.5.1</span><p>Regular season schedules will have a set number of weeks in which teams have one scheduled match per week. These matches must be played within the week they are assigned. Weekly matchups are distributed prior to the season starting.</p></div>
+          </div>
+          <div class="sub" id="r5-6">
+            <h4><span class="num">5.6</span>Tie-breaking Format</h4>
+            <div class="rule"><span class="rid">5.7.1</span><p>In the case of a points tie between teams at the conclusion of the regular season, the first tie-breaker is the total win rate of all games played during the regular season.</p></div>
+            <div class="rule"><span class="rid">5.7.2</span><p>If the teams have an identical win rate, the next tie breaker is head-to-head results.</p></div>
+            <div class="rule"><span class="rid">5.7.3</span><p>If teams are still tied, the tied teams will play a one game tie-breaker to determine their place in the standings.</p></div>
+          </div>
+        </div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== SLOPE ===================== -->
+<section class="band" id="slope">
+  <div class="wrap">
+    <div class="band-head">
+      <div class="eyebrow">Section B</div>
+      <h2>SLOPE Evaluations</h2>
+      <p>The Standardized Level Of Play Estimate, by WD Maverick. One formula that applies to everyone and gives a fair picture of your level of play in a competitive setting.</p>
+    </div>
+    <div class="slope-grid">
+      <div class="prose">
+        <h3>Variables</h3>
+        <dl class="vars">
+          <dt>x</dt><dd>Current rank, at the time the application is submitted</dd>
+          <dt>y</dt><dd>Peak rank in 2026 (used with 200+ games in 2026)</dd>
+          <dt>y′</dt><dd>Peak rank across 2025 and 2026 (used with fewer than 200 games)</dd>
+          <dt>z</dt><dd>Ranked solo/duo games played in 2026</dd>
+          <dt>a</dt><dd>OTP status: share of your games on your main champion</dd>
+          <dt>b</dt><dd>Role status: 0 on-role, ½ secondary role, 1 off-role</dd>
+        </dl>
+        <h3>How it reads</h3>
+        <p>Only ranked solo/duo games count. Ranks use the apex-tier scale with Master 0 LP as the zero point, so Diamond 4 0 LP is −400 LP, Emerald 4 0 LP is −800 LP, and so on. Apex players who decayed recently use their rank from before the decay.</p>
+        <p>Your current rank is the base. It is pulled toward your peak by a weight of <span class="mono">150/z + ¼</span>, so the more games you play, the more the result leans toward your current rank. At 600 games the result sits halfway between peak and current. The peak never fully disappears: the weight never drops below a quarter.</p>
+        <p>The penalty terms account for one-trick players and players off their main role. <span class="mono">q</span> scales from 0 at 50% on one champion to 1 at 100%; below 50% there is no OTP adjustment. The <span class="mono">qb</span> term in Division 1 covers players who are both one-tricks and off-role.</p>
+        <p>With fewer than 200 games it is hard to estimate your level, so your SLOPE equals your highest peak of the last two seasons.</p>
+        <div class="doc-links">
+          <a class="btn" href="https://drive.google.com/file/d/1ss4DqESf0VN2vPcBvnPUsJRWD0nqzJhL/view" target="_blank" rel="noopener">Read SLOPE.pdf</a>
+          <a class="btn ghost" href="https://colab.research.google.com/drive/115SeCJfrsuFeppZrprDW_tJcKFyIaOHo?usp=sharing" target="_blank" rel="noopener">Open Colab notebook</a>
+          <a class="btn ghost" href="#calculator">Use the calculator</a>
+        </div>
+      </div>
+
+      <div class="formula-card">
+        <div class="eyebrow">The formula · Division 1</div>
+        <div class="formula">f = <var>x</var> + (<var>y</var> − <var>x</var>)(<span class="frac"><span>150</span><span><var>z</var></span></span> + <span class="frac"><span>1</span><span>4</span></span>) − 300<var>q</var> − 400<var>b</var> − 300<var>qb</var></div>
+        <div class="formula">q(<var>a</var>) = 2<var>a</var><sup>4(k−1)<var>a</var> + 3 − 2k</sup> − 1, &nbsp; k = ln 0.7 / ln 0.75</div>
+        <div class="formula">if <var>a</var> &lt; 0.50 → <var>q</var> = 0 &nbsp;·&nbsp; if <var>z</var> &lt; 200 → f = <var>y′</var></div>
+        <div class="eyebrow">Penalty terms by formula</div>
+        <div class="tablebox">
+          <table class="data pen-table">
+            <thead><tr><th>Formula</th><th class="n">OTP (q)</th><th class="n">Role (b)</th><th class="n">q·b</th></tr></thead>
+            <tbody>
+              <tr><td>Division 1</td><td class="n">−300</td><td class="n">−400</td><td class="n">−300</td></tr>
+              <tr><td>Division 2</td><td class="n">−150</td><td class="n">−200</td><td class="n">—</td></tr>
+              <tr><td>Division 3</td><td class="n">−100</td><td class="n">−100</td><td class="n">—</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="hint">Lower divisions use smaller penalties because LP behaves differently below Master and mistakes are punished harder at higher ranks.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================== CALCULATOR ===================== -->
+<section class="band" id="calculator">
+  <div class="wrap">
+    <div class="band-head">
+      <div class="eyebrow">Section C</div>
+      <h2>SLOPE Calculator</h2>
+      <p>Enter your ranked solo/duo details to get your SLOPE rating and point value. Add each player to the roster to check the team’s TPE against the division limit. Results are an estimate; league staff make the final evaluation.</p>
+    </div>
+
+    <div class="calc">
+      <form class="panel" id="calcForm" autocomplete="off">
+        <fieldset>
+          <legend>League division</legend>
+          <select id="league" aria-label="League division"></select>
+          <p class="hint" id="formulaHint"></p>
+        </fieldset>
+
+        <fieldset>
+          <legend>Current rank</legend>
+          <div class="row rank">
+            <label class="lab">Tier<select id="curTier"></select></label>
+            <label class="lab">Division<select id="curDiv"><option>4</option><option>3</option><option>2</option><option>1</option></select></label>
+            <label class="lab"><span id="curLpLab">LP</span><input type="number" id="curLp" min="0" max="3000" step="1" inputmode="numeric"></label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Games played</legend>
+          <label class="lab">Ranked solo/duo games in 2026<input type="number" id="games" min="0" step="1" inputmode="numeric"></label>
+        </fieldset>
+
+        <fieldset>
+          <legend id="peakLegend">Peak rank in 2026</legend>
+          <div class="row rank">
+            <label class="lab">Tier<select id="peakTier"></select></label>
+            <label class="lab">Division<select id="peakDiv"><option>4</option><option>3</option><option>2</option><option>1</option></select></label>
+            <label class="lab"><span id="peakLpLab">LP</span><input type="number" id="peakLp" min="0" max="3000" step="1" inputmode="numeric"></label>
+          </div>
+          <p class="hint" id="peakHint"></p>
+        </fieldset>
+
+        <fieldset>
+          <legend>Games on main champion</legend>
+          <div class="otp">
+            <input type="range" id="otpRange" min="0" max="100" step="1" aria-label="Percent of games on main champion">
+            <label class="lab" style="grid-template-columns:1fr auto;align-items:center"><input type="number" id="otp" min="0" max="100" step="1" aria-label="Percent on main champion"><span>%</span></label>
+          </div>
+        </fieldset>
+
+        <fieldset>
+          <legend>Role status for this slot</legend>
+          <div class="seg-group" role="radiogroup">
+            <input type="radio" name="role" id="roleOn" value="on"><label for="roleOn">On-role</label>
+            <input type="radio" name="role" id="roleSec" value="secondary"><label for="roleSec">Secondary role</label>
+            <input type="radio" name="role" id="roleOff" value="off"><label for="roleOff">Off-role</label>
+          </div>
+          <p class="hint">Secondary: not your main role, but you have a decent number of games on it, queue it as secondary, or your main champions flex into it.</p>
+        </fieldset>
+
+        <fieldset>
+          <legend>Roster details (optional)</legend>
+          <div class="row">
+            <label class="lab">Player name<input type="text" id="pname" maxlength="40"></label>
+            <label class="lab">Position<select id="pos"><option>Top</option><option>Jungle</option><option>Mid</option><option>Bottom</option><option>Support</option></select></label>
+          </div>
+          <label class="check"><input type="checkbox" id="academy"> Member of a WTL academy</label>
+        </fieldset>
+      </form>
+
+      <div class="panel" aria-live="polite">
+        <div class="result" id="result"></div>
+        <div class="actions">
+          <button type="button" class="btn" id="addStarter">Add as starter</button>
+          <button type="button" class="btn ghost" id="addSub">Add as sub</button>
+        </div>
+
+        <hr style="border:0;border-top:1px solid var(--line);margin:4px 0;width:100%">
+
+        <div class="team-head">
+          <h3>Team rating</h3>
+          <div class="actions">
+            <span class="pill info" id="exampleTag" hidden>Example roster</span>
+            <button type="button" class="btn ghost small" id="clearTeam">Clear roster</button>
+          </div>
+        </div>
+        <div class="tpe" id="tpeBox"></div>
+        <div class="tablebox" id="teamBox"></div>
+        <ul class="checks" id="checks"></ul>
+      </div>
+    </div>
+  </div>
+</section>
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <span>WTL Championship 2026 · We Teach League · <a href="https://weteachleague.com" target="_blank" rel="noopener">weteachleague.com</a></span>
+    <span>SLOPE evaluations by WD Maverick</span>
+  </div>
+</footer>
+
+<script>
+(() => {
+  // ---------- Rank scale (Master 0 LP = 0) ----------
+  const TIERS = ["iron", "bronze", "silver", "gold", "platinum", "emerald", "diamond", "master"];
+  const APEX = ["master", "grandmaster", "challenger"];
+  const TIER_OPTS = ["iron", "bronze", "silver", "gold", "platinum", "emerald", "diamond", "master", "grandmaster", "challenger"];
+  const MASTER_IDX = 7;
+  const K = Math.log(0.7) / Math.log(0.75);
+  const cap = s => s.charAt(0).toUpperCase() + s.slice(1);
+
+  function rankToLp(tier, div, lp) {
+    if (APEX.includes(tier)) return lp;
+    const idx = TIERS.indexOf(tier);
+    return -400 * (MASTER_IDX - 1 - idx) - 100 * div + lp;
+  }
+  function lpToRank(v) {
+    if (v >= 0) return `Master+ ${Math.round(v)} LP`;
+    const steps = Math.ceil(-v / 100);
+    const idx = (MASTER_IDX - 1) - Math.floor((steps - 1) / 4);
+    const div = (steps - 1) % 4 + 1;
+    if (idx < 0) return "Below Iron 4";
+    return `${cap(TIERS[idx])} ${div} ${Math.round(v + 100 * steps)} LP`;
+  }
+
+  // ---------- SLOPE formula ----------
+  function qOfA(a) {
+    if (a < 0.5) return 0;
+    return 2 * Math.pow(a, 4 * (K - 1) * a + 3 - 2 * K) - 1;
+  }
+  const ROLE_B = { on: 0, secondary: 0.5, off: 1 };
+  const PEN = { 1: [300, 400, 300], 2: [150, 200, 0], 3: [100, 100, 0] };
+  function slope(fd, x, y, z, a, role) {
+    if (z < 200) return { value: y, peakOnly: true };
+    const q = qOfA(a), b = ROLE_B[role], w = 150 / z + 0.25;
+    const base = x + (y - x) * w;
+    const [pq, pb, pqb] = PEN[fd];
+    return { value: base - pq * q - pb * b - pqb * q * b, q, b, w, base, penQ: pq * q, penB: pb * b, penQB: pqb * q * b };
+  }
+
+  // ---------- Divisions & point tables (rulebook 1.2 / 2.3.1) ----------
+  function tierDivs(fromTier, toTier) {
+    const out = [];
+    for (let t = TIERS.indexOf(fromTier); t <= TIERS.indexOf(toTier); t++)
+      for (let d = 4; d >= 1; d--) {
+        const min = rankToLp(TIERS[t], d, 0);
+        out.push({ label: `${cap(TIERS[t])} ${d} 0–99 LP`, min, max: min + 100 });
+      }
+    return out;
+  }
+  function masters(n, lastInclusive) {
+    const out = [];
+    for (let i = 0; i < n; i++) {
+      const min = i * 125, last = i === n - 1 && lastInclusive != null;
+      out.push({ label: `Master ${min}–${last ? lastInclusive : min + 124} LP`, min, max: last ? lastInclusive + 1 : min + 125 });
+    }
+    return out;
+  }
+  // formula: which SLOPE formula (1-3) applies. EU mappings follow rank bands; confirm with staff.
+  const LEAGUES = {
+    na1: { name: "NA · Division 1", range: "Diamond 4 – Master 1500 LP", formula: 1, tpe: [28, 38], table: [...tierDivs("diamond", "diamond"), ...masters(12, 1500)] },
+    na2: { name: "NA · Division 2", range: "Emerald 4 – Diamond 1", formula: 2, tpe: [18, 25], table: tierDivs("emerald", "diamond") },
+    na3: { name: "NA · Division 3", range: "Silver 4 – Platinum 1", formula: 3, tpe: [28, 38], table: tierDivs("silver", "platinum") },
+    eu1: { name: "EU · Division 1", range: "Emerald 4 – Master 300 LP", formula: 2, tpe: [25, 35], table: [...tierDivs("emerald", "diamond"), ...masters(3)] },
+    eu2: { name: "EU · Division 2", range: "Silver 4 – Platinum 1", formula: 3, tpe: [28, 38], table: tierDivs("silver", "platinum") },
+  };
+  function pointsFor(leagueKey, v) {
+    const t = LEAGUES[leagueKey].table;
+    if (v < t[0].min) return { pts: 1, below: true };
+    if (v >= t[t.length - 1].max) return { pts: null, above: true };
+    const i = t.findIndex(r => v >= r.min && v < r.max);
+    return { pts: i + 1, label: t[i].label };
+  }
+
+  // ---------- Storage (per-viewer convenience only) ----------
+  const store = {
+    get(k) { try { return JSON.parse(localStorage.getItem(k)); } catch { return null; } },
+    set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} },
+  };
+
+  const $ = id => document.getElementById(id);
+  const fmt = n => (Math.round(n * 10) / 10).toLocaleString("en-US", { minimumFractionDigits: 1, maximumFractionDigits: 1 });
+  const esc = s => String(s).replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
+
+  // ---------- Rulebook tables ----------
+  let ptKey = "na1";
+  function renderPtTabs() {
+    $("ptTabs").innerHTML = Object.entries(LEAGUES).map(([k, L]) =>
+      `<button type="button" class="seg" role="tab" aria-selected="${k === ptKey}" data-k="${k}">${L.name}</button>`).join("");
+    const L = LEAGUES[ptKey];
+    $("ptTable").innerHTML = `<div class="pt-card"><header><strong>${L.name}</strong><span>${L.range} · ${L.table.length} brackets</span></header>
+      <div class="pt-cols">${L.table.map((r, i) => `<div class="pt-row"><span>${r.label}</span><b>${i + 1}</b></div>`).join("")}</div></div>`;
+  }
+  $("ptTabs").addEventListener("click", e => { const b = e.target.closest("[data-k]"); if (b) { ptKey = b.dataset.k; renderPtTabs(); } });
+  $("tpeRows").innerHTML = Object.values(LEAGUES).map(L => `<tr><td>${L.name}</td><td class="n">${L.tpe[0]}–${L.tpe[1]} points</td></tr>`).join("");
+  renderPtTabs();
+
+  // ---------- Calculator form ----------
+  $("league").innerHTML = Object.entries(LEAGUES).map(([k, L]) => `<option value="${k}">${L.name} (${L.range})</option>`).join("");
+  const tierOpts = TIER_OPTS.map(t => `<option value="${t}">${cap(t)}</option>`).join("");
+  $("curTier").innerHTML = tierOpts; $("peakTier").innerHTML = tierOpts;
+
+  const DEFAULTS = { league: "na1", curTier: "diamond", curDiv: "2", curLp: 45, games: 412, peakTier: "master", peakDiv: "4", peakLp: 180, otp: 62, role: "on", pname: "", pos: "Mid", academy: true };
+  const saved = Object.assign({}, DEFAULTS, store.get("wtl-form") || {});
+  for (const k of ["league", "curTier", "curDiv", "curLp", "games", "peakTier", "peakDiv", "peakLp", "otp", "pname", "pos"]) $(k).value = saved[k];
+  $("otpRange").value = saved.otp;
+  $("academy").checked = !!saved.academy;
+  ({ on: $("roleOn"), secondary: $("roleSec"), off: $("roleOff") })[saved.role].checked = true;
+
+  function readForm() {
+    const num = (id, d = 0) => { const n = parseFloat($(id).value); return Number.isFinite(n) ? n : d; };
+    return {
+      league: $("league").value,
+      curTier: $("curTier").value, curDiv: +$("curDiv").value, curLp: Math.max(0, num("curLp")),
+      games: Math.max(0, Math.floor(num("games"))),
+      peakTier: $("peakTier").value, peakDiv: +$("peakDiv").value, peakLp: Math.max(0, num("peakLp")),
+      otp: Math.min(100, Math.max(0, num("otp"))),
+      role: document.querySelector('input[name="role"]:checked').value,
+      pname: $("pname").value.trim(), pos: $("pos").value, academy: $("academy").checked,
+    };
+  }
+
+  function evaluate(p, leagueKey) {
+    const L = LEAGUES[leagueKey];
+    const x = rankToLp(p.curTier, p.curDiv, p.curLp);
+    const y = rankToLp(p.peakTier, p.peakDiv, p.peakLp);
+    const s = slope(L.formula, x, y, p.games, p.otp / 100, p.role);
+    return { x, y, ...s, pt: pointsFor(leagueKey, s.value) };
+  }
+
+  function syncApex(tierId, divId, lpLabId) {
+    const apex = APEX.includes($(tierId).value);
+    $(divId).disabled = apex;
+    $(lpLabId).textContent = apex ? "Total LP" : "LP";
+  }
+
+  const ROLE_LABEL = { on: "On-role", secondary: "Secondary", off: "Off-role" };
+
+  function pointsBadge(pt) {
+    if (pt.above) return `<div class="points" style="background:var(--warn-soft);color:var(--warn)"><b>—</b><span>Above cap</span></div>`;
+    return `<div class="points"><b>${pt.pts}</b><span>${pt.pts === 1 ? "point" : "points"}</span></div>`;
+  }
+  function pointsNote(pt, L) {
+    if (pt.above) return `<span class="pill warn">Above the ${esc(L.name)} bracket</span>`;
+    if (pt.below) return `<span class="pill warn">Below bracket · counts as 1 point (max one per team, 1.2.4)</span>`;
+    return `<span class="pill ok">${esc(pt.label)}</span>`;
+  }
+
+  function renderResult() {
+    const p = readForm();
+    syncApex("curTier", "curDiv", "curLpLab");
+    syncApex("peakTier", "peakDiv", "peakLpLab");
+    const L = LEAGUES[p.league];
+    const r = evaluate(p, p.league);
+    const few = p.games < 200;
+    $("peakLegend").textContent = few ? "Peak rank since January 2025" : "Peak rank in 2026";
+    $("peakHint").textContent = few ? "Under 200 games in 2026: your SLOPE equals this peak." : "200+ games in 2026: use your 2026 peak.";
+    $("formulaHint").textContent = `Uses the Division ${L.formula} SLOPE formula. TPE limit ${L.tpe[0]}–${L.tpe[1]} points.`;
+
+    let rows;
+    if (r.peakOnly) {
+      rows = `<dt>Peak rank used</dt><dd>${fmt(r.y)} LP</dd><dt>Reason</dt><dd>${p.games} games &lt; 200</dd>`;
+    } else {
+      rows = `<dt>Current rank (x)</dt><dd>${fmt(r.x)} LP</dd>
+        <dt>Peak rank (y)</dt><dd>${fmt(r.y)} LP</dd>
+        <dt>Peak weight (150/z + ¼)</dt><dd>${r.w.toFixed(3)}</dd>
+        <dt>Rank estimate</dt><dd>${fmt(r.base)} LP</dd>
+        <dt>OTP penalty (q = ${r.q.toFixed(3)})</dt><dd>−${fmt(r.penQ)}</dd>
+        <dt>Role penalty (b = ${r.b})</dt><dd>−${fmt(r.penB)}</dd>
+        ${L.formula === 1 ? `<dt>OTP × role penalty</dt><dd>−${fmt(r.penQB)}</dd>` : ""}`;
+    }
+    $("result").innerHTML = `
+      <div class="eyebrow">Your SLOPE rating · ${esc(L.name)}</div>
+      <div class="score">
+        <div><div class="big">${fmt(r.value)}<small>LP</small></div><div class="rank-eq">≈ ${esc(lpToRank(r.value))}</div></div>
+        ${pointsBadge(r.pt)}
+      </div>
+      <div>${pointsNote(r.pt, L)}</div>
+      <dl class="breakdown">${rows}<dt><strong>SLOPE</strong></dt><dd><strong>${fmt(r.value)} LP</strong></dd></dl>`;
+    store.set("wtl-form", p);
+    renderTeam();
+  }
+
+  // ---------- Team ----------
+  const EXAMPLE = [
+    { pname: "Example Top", pos: "Top", slot: "starter", academy: true, curTier: "diamond", curDiv: 1, curLp: 20, games: 530, peakTier: "master", peakDiv: 4, peakLp: 210, otp: 40, role: "on" },
+    { pname: "Example Jungle", pos: "Jungle", slot: "starter", academy: true, curTier: "master", curDiv: 4, curLp: 160, games: 380, peakTier: "master", peakDiv: 4, peakLp: 340, otp: 35, role: "on" },
+    { pname: "Example Mid", pos: "Mid", slot: "starter", academy: false, curTier: "diamond", curDiv: 2, curLp: 45, games: 412, peakTier: "master", peakDiv: 4, peakLp: 180, otp: 62, role: "on" },
+    { pname: "Example Bot", pos: "Bottom", slot: "starter", academy: true, curTier: "diamond", curDiv: 3, curLp: 70, games: 260, peakTier: "diamond", peakDiv: 1, peakLp: 50, otp: 30, role: "secondary" },
+    { pname: "Example Support", pos: "Support", slot: "starter", academy: false, curTier: "master", curDiv: 4, curLp: 40, games: 150, peakTier: "master", peakDiv: 4, peakLp: 120, otp: 55, role: "on" },
+    { pname: "Example Sub", pos: "Mid", slot: "sub", academy: true, curTier: "diamond", curDiv: 3, curLp: 10, games: 300, peakTier: "diamond", peakDiv: 2, peakLp: 0, otp: 70, role: "on" },
+  ];
+  let teamState = store.get("wtl-team");
+  if (!teamState || !Array.isArray(teamState.players)) teamState = { example: true, players: EXAMPLE.map(x => ({ ...x })) };
+  const saveTeam = () => store.set("wtl-team", teamState);
+
+  function addPlayer(slot) {
+    const p = readForm();
+    if (teamState.example) teamState = { example: false, players: [] };
+    if (teamState.players.length >= 10) return;
+    const n = teamState.players.length + 1;
+    teamState.players.push({ ...p, slot, pname: p.pname || `Player ${n}` });
+    delete teamState.players[teamState.players.length - 1].league;
+    saveTeam(); renderTeam();
+  }
+
+  function renderTeam() {
+    const lk = $("league").value, L = LEAGUES[lk];
+    const ps = teamState.players.map(p => ({ p, r: evaluate(p, lk) }));
+    $("exampleTag").hidden = !teamState.example;
+    $("addStarter").disabled = $("addSub").disabled = !teamState.example && teamState.players.length >= 10;
+
+    if (!ps.length) {
+      $("teamBox").innerHTML = `<div class="empty">No players yet. Fill in the form and choose “Add as starter” for each of your five starters.</div>`;
+    } else {
+      $("teamBox").innerHTML = `<table class="data team"><thead><tr><th>Player</th><th>Pos</th><th>Slot</th><th title="WTL academy member">Acad.</th><th class="n">SLOPE</th><th class="n">Pts</th><th><span hidden>Remove</span></th></tr></thead><tbody>
+        ${ps.map(({ p, r }, i) => `<tr class="${teamState.example ? "example" : ""}">
+          <td>${esc(p.pname)}<div class="hint">${ROLE_LABEL[p.role]} · ${p.games} games</div></td>
+          <td>${esc(p.pos)}</td>
+          <td><select data-i="${i}" data-f="slot" aria-label="Slot for ${esc(p.pname)}"><option value="starter"${p.slot === "starter" ? " selected" : ""}>Starter</option><option value="sub"${p.slot === "sub" ? " selected" : ""}>Sub</option></select></td>
+          <td><input type="checkbox" data-i="${i}" data-f="academy" aria-label="Academy member"${p.academy ? " checked" : ""}></td>
+          <td class="n">${fmt(r.value)}</td>
+          <td class="n">${r.pt.above ? "—" : r.pt.pts}${r.pt.below ? "*" : ""}</td>
+          <td><button type="button" class="x" data-del="${i}" aria-label="Remove ${esc(p.pname)}">×</button></td></tr>`).join("")}
+        </tbody></table>`;
+    }
+
+    const starters = ps.filter(o => o.p.slot === "starter");
+    const subs = ps.filter(o => o.p.slot === "sub");
+    const tpe = starters.reduce((s, o) => s + (o.r.pt.pts || 0), 0);
+    const [lo, hi] = L.tpe;
+    const scaleMax = Math.max(hi + 10, tpe + 2);
+    const pct = v => Math.min(100, (v / scaleMax) * 100);
+    const inRange = tpe >= lo && tpe <= hi;
+    $("tpeBox").innerHTML = `
+      <div><div class="eyebrow">TPE (5 starters)</div><div class="big">${tpe}<small> / ${lo}–${hi}</small></div></div>
+      <div class="meter">
+        <div class="meter-track" role="img" aria-label="TPE ${tpe} against limit ${lo} to ${hi}">
+          <div class="meter-band" style="left:${pct(lo)}%;width:${pct(hi) - pct(lo)}%"></div>
+          <div class="meter-mark" style="left:${pct(tpe)}%"></div>
+        </div>
+        <div class="meter-scale"><span>0</span><span>${scaleMax}</span></div>
+      </div>
+      <span class="pill ${inRange && starters.length === 5 ? "ok" : "warn"}">${starters.length < 5 ? `${starters.length}/5 starters` : inRange ? "Within limit" : tpe > hi ? `${tpe - hi} over limit` : `${lo - tpe} under limit`}</span>`;
+
+    const checks = [];
+    const add = (ok, text) => checks.push(`<li><span class="tag ${ok ? "ok" : "warn"}">${ok ? "OK" : "Check"}</span><span>${text}</span></li>`);
+    add(starters.length === 5, `Exactly 5 starters (${starters.length} listed)`);
+    add(inRange, `TPE ${tpe} within ${L.name} soft cap of ${lo}–${hi} (2.3.1)`);
+    add(ps.length >= 6 && ps.length <= 10, `Roster of 6–10 players (${ps.length} listed, 2.1.1)`);
+    const acad = starters.filter(o => o.p.academy).length;
+    add(acad >= 3, `At least 3 of 5 starters are WTL academy members (${acad}, 2.3.3)`);
+    const below = ps.filter(o => o.r.pt.below).length;
+    add(below <= 1, `At most one player below the point bracket (${below}, 1.2.4)`);
+    const above = ps.filter(o => o.r.pt.above);
+    add(!above.length, above.length ? `Above the division bracket: ${above.map(o => esc(o.p.pname)).join(", ")}` : "No player above the division bracket");
+    const badSubs = subs.filter(s => {
+      const st = starters.find(o => o.p.pos === s.p.pos);
+      return st && (s.r.pt.pts || 99) >= (st.r.pt.pts || 0);
+    });
+    if (subs.length) add(!badSubs.length, badSubs.length
+      ? `Sub not below their starter’s points: ${badSubs.map(o => `${esc(o.p.pname)} (${esc(o.p.pos)})`).join(", ")} (2.3.2)`
+      : "Every sub is below their position’s starter (2.3.2)");
+    $("checks").innerHTML = checks.join("");
+  }
+
+  $("teamBox").addEventListener("change", e => {
+    const el = e.target, i = +el.dataset.i;
+    if (!el.dataset.f) return;
+    teamState.players[i][el.dataset.f] = el.type === "checkbox" ? el.checked : el.value;
+    saveTeam(); renderTeam();
+  });
+  $("teamBox").addEventListener("click", e => {
+    const b = e.target.closest("[data-del]"); if (!b) return;
+    teamState.players.splice(+b.dataset.del, 1);
+    saveTeam(); renderTeam();
+  });
+  $("clearTeam").addEventListener("click", () => { teamState = { example: false, players: [] }; saveTeam(); renderTeam(); });
+  $("addStarter").addEventListener("click", () => addPlayer("starter"));
+  $("addSub").addEventListener("click", () => addPlayer("sub"));
+
+  $("otpRange").addEventListener("input", () => { $("otp").value = $("otpRange").value; renderResult(); });
+  $("otp").addEventListener("input", () => { $("otpRange").value = $("otp").value; renderResult(); });
+  $("calcForm").addEventListener("input", e => { if (e.target.id !== "otpRange" && e.target.id !== "otp") renderResult(); });
+  $("calcForm").addEventListener("change", renderResult);
+  $("calcForm").addEventListener("submit", e => e.preventDefault());
+  renderResult();
+
+  // ---------- Nav highlight ----------
+  const navLinks = [...document.querySelectorAll("[data-nav]")];
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(en => { if (en.isIntersecting) navLinks.forEach(a => a.classList.toggle("active", a.dataset.nav === en.target.id)); });
+  }, { rootMargin: "-45% 0px -50% 0px" });
+  ["rules", "slope", "calculator"].forEach(id => io.observe($(id)));
+
+  // expose for testing
+  window.__slope = { rankToLp, lpToRank, slope, qOfA, pointsFor };
+})();
+</script>
+
+</body>
+</html>
