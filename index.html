@@ -219,6 +219,22 @@ table.team tr.example td { color: var(--muted); }
 .checks .tag.ok { background: var(--ok-soft); color: var(--ok); }
 .checks .tag.warn { background: var(--warn-soft); color: var(--warn); }
 .empty { padding: 18px; text-align: center; color: var(--muted); border: 1px dashed var(--line); border-radius: var(--radius); font-size: 15px; }
+/* Rank track (current / peak / SLOPE on the Master = 0 scale) */
+.track { position: relative; height: 64px; margin: 4px 8px 22px; }
+.track::before { content: ""; position: absolute; left: 0; right: 0; top: 30px; height: 2px; background: var(--line); }
+.mk { position: absolute; top: 0; transform: translateX(-50%); text-align: center; font: 500 12px/1.2 var(--font-display); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+.mk i { display: block; width: 12px; height: 12px; border-radius: 50%; margin: 12px auto 4px; background: var(--muted); }
+.mk.peak i { background: var(--accent); }
+.mk.peak { color: var(--accent); }
+.mk.slope { color: #fff; font-weight: 600; }
+.mk.slope i { background: var(--magenta); width: 18px; height: 18px; margin: 9px auto 3px; }
+.mk.lo { transform: translateX(-10%); } .mk.hi { transform: translateX(-90%); }
+.tk { position: absolute; top: 18px; height: 24px; width: 0; border-left: 1px solid var(--muted); opacity: .6; }
+.tk span { position: absolute; top: 28px; left: 0; transform: translateX(-50%); font: 500 11px/1 var(--font-display); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); white-space: nowrap; }
+.breakdown dd.neg { color: var(--warn); }
+.result.stale { opacity: .45; }
+.err { color: var(--warn); font-size: 14px; margin: 0; }
+.err:empty { display: none; }
 hr.split { border: 0; border-top: 1px solid var(--line); margin: 4px 0; width: 100%; }
 
 footer.foot { border-top: 1px solid var(--line); }
@@ -562,12 +578,13 @@ footer.foot .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; gap: 8p
             <input type="range" id="otpRange" min="0" max="100" step="1" aria-label="Percent of games on main champion">
             <label class="lab" style="grid-template-columns:1fr auto;align-items:center"><input type="number" id="otp" min="0" max="100" step="1" aria-label="Percent on main champion"><span>%</span></label>
           </div>
+          <p class="hint">Below 50% there is no one-trick penalty.</p>
         </fieldset>
 
         <fieldset>
           <legend>Role status for this slot</legend>
           <div class="seg-group" role="radiogroup">
-            <input type="radio" name="role" id="roleOn" value="on"><label for="roleOn">On-role</label>
+            <input type="radio" name="role" id="roleOn" value="on"><label for="roleOn">Main role</label>
             <input type="radio" name="role" id="roleSec" value="secondary"><label for="roleSec">Secondary role</label>
             <input type="radio" name="role" id="roleOff" value="off"><label for="roleOff">Off-role</label>
           </div>
@@ -581,7 +598,9 @@ footer.foot .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; gap: 8p
             <label class="lab">Position<select id="pos"><option>Top</option><option>Jungle</option><option>Mid</option><option>Bottom</option><option>Support</option></select></label>
           </div>
           <label class="check"><input type="checkbox" id="academy"> Member of a WTL academy</label>
+          <p class="hint">The name also appears on the PNG download.</p>
         </fieldset>
+        <p class="err" id="calcErr" role="alert"></p>
       </form>
 
       <div class="panel" aria-live="polite">
@@ -589,7 +608,9 @@ footer.foot .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; gap: 8p
         <div class="actions">
           <button type="button" class="btn" id="addStarter">Add as starter</button>
           <button type="button" class="btn ghost" id="addSub">Add as sub</button>
+          <button type="button" class="btn ghost" id="dlPng">Download as PNG</button>
         </div>
+        <p class="hint" id="dlMsg" aria-live="polite"></p>
 
         <hr class="split">
 
@@ -597,12 +618,14 @@ footer.foot .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; gap: 8p
           <h3>Team rating</h3>
           <div class="actions">
             <span class="pill info" id="exampleTag" hidden>Example roster</span>
+            <button type="button" class="btn ghost small" id="dlTeam">Download team PNG</button>
             <button type="button" class="btn ghost small" id="clearTeam">Clear roster</button>
           </div>
         </div>
         <div class="tpe" id="tpeBox"></div>
         <div class="tablebox" id="teamBox"></div>
         <ul class="checks" id="checks"></ul>
+        <p class="hint" id="dlTeamMsg" aria-live="polite"></p>
       </div>
     </div>
   </div>
@@ -637,7 +660,7 @@ footer.foot .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; gap: 8p
     const idx = (MASTER_IDX - 1) - Math.floor((steps - 1) / 4);
     const div = (steps - 1) % 4 + 1;
     if (idx < 0) return "Below Iron 4";
-    return `${cap(TIERS[idx])} ${div} ${Math.round(v + 100 * steps)} LP`;
+    return `${cap(TIERS[idx])} ${div} · ${Math.round(v + 100 * steps)} LP`;
   }
 
   // ---------- SLOPE formula ----------
@@ -681,12 +704,25 @@ footer.foot .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; gap: 8p
     eu1: { name: "EU · Division 1", range: "Emerald 4 – Master 300 LP", formula: 2, tpe: [25, 35], table: [...tierDivs("emerald", "diamond"), ...masters(3)] },
     eu2: { name: "EU · Division 2", range: "Silver 4 – Platinum 1", formula: 3, tpe: [28, 38], table: tierDivs("silver", "platinum") },
   };
-  function pointsFor(leagueKey, v) {
-    const t = LEAGUES[leagueKey].table;
-    if (v < t[0].min) return { pts: 1, below: true };
-    if (v >= t[t.length - 1].max) return { pts: null, above: true };
-    const i = t.findIndex(r => v >= r.min && v < r.max);
-    return { pts: i + 1, label: t[i].label };
+  // Point values follow the SLOPE calculator by WD Maverick: keyed on the formula division,
+  // SLOPE rounded to the nearest LP, 1 point per 100 LP below Master then 1 per 125 LP, clamped to [1, cap].
+  // bottom = LP value of the lowest listed rank (1 point), cap = highest point value
+  const POINT_TABLES = { 1: { bottom: -400, cap: 16 }, 2: { bottom: -800, cap: 11 }, 3: { bottom: -2000, cap: 12 } };
+  function pointsFor(leagueKey, value) {
+    const L = LEAGUES[leagueKey], t = POINT_TABLES[L.formula], v = Math.round(value);
+    const raw = v < 0 ? Math.floor((v - t.bottom) / 100) + 1 : (-t.bottom / 100 + 1) + Math.floor(v / 125);
+    const pts = Math.max(1, Math.min(t.cap, raw));
+    let label;
+    if (v < 0) {
+      const steps = Math.ceil(-v / 100), idx = (MASTER_IDX - 1) - Math.floor((steps - 1) / 4);
+      label = idx < 0 ? "Below Iron 4" : `${cap(TIERS[idx])} ${(steps - 1) % 4 + 1} 0–99 LP`;
+    } else {
+      const s = Math.floor(v / 125) * 125;
+      label = `Master ${s}–${s + 124} LP`;
+    }
+    // Outside the rulebook's listed range for this league (e.g. NA Div 2 lists up to Diamond 1 only)
+    const tbl = L.table, outOfTable = v >= tbl[tbl.length - 1].max && raw <= t.cap;
+    return { pts, below: raw < 1, above: raw > t.cap, outOfTable, label };
   }
 
   // ---------- Storage (per-viewer convenience only) ----------
@@ -725,16 +761,23 @@ footer.foot .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; gap: 8p
   ({ on: $("roleOn"), secondary: $("roleSec"), off: $("roleOff") })[saved.role].checked = true;
 
   function readForm() {
-    const num = (id, d = 0) => { const n = parseFloat($(id).value); return Number.isFinite(n) ? n : d; };
+    const num = id => { const n = parseFloat($(id).value); return Number.isFinite(n) ? n : NaN; };
     return {
       league: $("league").value,
-      curTier: $("curTier").value, curDiv: +$("curDiv").value, curLp: Math.max(0, num("curLp")),
-      games: Math.max(0, Math.floor(num("games"))),
-      peakTier: $("peakTier").value, peakDiv: +$("peakDiv").value, peakLp: Math.max(0, num("peakLp")),
-      otp: Math.min(100, Math.max(0, num("otp"))),
+      curTier: $("curTier").value, curDiv: +$("curDiv").value, curLp: num("curLp"),
+      games: Math.floor(num("games")),
+      peakTier: $("peakTier").value, peakDiv: +$("peakDiv").value, peakLp: num("peakLp"),
+      otp: num("otp"),
       role: document.querySelector('input[name="role"]:checked').value,
       pname: $("pname").value.trim(), pos: $("pos").value, academy: $("academy").checked,
     };
+  }
+  function validate(p) {
+    const lpOk = (tier, lp) => Number.isFinite(lp) && lp >= 0 && (APEX.includes(tier) || lp <= 99);
+    if (!lpOk(p.curTier, p.curLp) || !lpOk(p.peakTier, p.peakLp)) return "Check your LP: it must be 0–99 below Master, and 0 or more in Master and above.";
+    if (!Number.isFinite(p.games) || p.games < 0) return "Enter the number of ranked solo/duo games you played in 2026.";
+    if (!Number.isFinite(p.otp) || p.otp < 0 || p.otp > 100) return "Enter a main-champion percentage between 0 and 100.";
+    return "";
   }
 
   function evaluate(p, leagueKey) {
@@ -745,47 +788,74 @@ footer.foot .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; gap: 8p
     return { x, y, ...s, pt: pointsFor(leagueKey, s.value) };
   }
 
-  function syncApex(tierId, divId, lpLabId) {
+  function syncApex(tierId, divId, lpId, lpLabId) {
     const apex = APEX.includes($(tierId).value);
     $(divId).disabled = apex;
+    $(lpId).max = apex ? "" : "99";
     $(lpLabId).textContent = apex ? "Total LP" : "LP";
   }
 
-  const ROLE_LABEL = { on: "On-role", secondary: "Secondary", off: "Off-role" };
+  const ROLE_LABEL = { on: "Main role", secondary: "Secondary role", off: "Off-role" };
+  const signed = n => (n > 0 ? "+" : n < 0 ? "−" : "") + fmt(Math.abs(n)) + " LP";
 
   function pointsBadge(pt) {
-    if (pt.above) return `<div class="points over"><b>—</b><span>Above cap</span></div>`;
-    return `<div class="points"><b>${pt.pts}</b><span>${pt.pts === 1 ? "point" : "points"}</span></div>`;
+    return `<div class="points${pt.above ? " over" : ""}"><b>${pt.pts}</b><span>${pt.pts === 1 ? "point" : "points"}</span></div>`;
   }
   function pointsNote(pt, L) {
-    if (pt.above) return `<span class="pill warn">Above the ${esc(L.name)} bracket</span>`;
+    if (pt.above) return `<span class="pill warn">Above the ${esc(L.name)} range · scored at the top value</span>`;
     if (pt.below) return `<span class="pill warn">Below bracket · counts as 1 point (max one per team, 1.2.4)</span>`;
+    if (pt.outOfTable) return `<span class="pill warn">${esc(pt.label)} · above the ${esc(L.name)} table in the rulebook</span>`;
     return `<span class="pill ok">${esc(pt.label)}</span>`;
   }
 
+  // Rank track: one tick per tier start (every 400 LP; 0 = Master)
+  function ticks(lo, hi) {
+    const out = [];
+    for (let v = Math.ceil(lo / 400) * 400; v <= hi; v += 400) {
+      const k = MASTER_IDX + v / 400;
+      out.push({ v, label: v > 0 ? `+${v} LP` : cap(TIER_OPTS[k] || "") });
+    }
+    return out;
+  }
+  function trackModel(r) {
+    const vals = [r.x, r.y, r.value], lo = Math.min(...vals) - 80, hi = Math.max(...vals) + 80;
+    return { lo, hi, items: [[r.x, "cur", "Current"], [r.y, "peak", "Peak"], [r.value, "slope", "SLOPE"]] };
+  }
+  function trackHtml(m) {
+    const pos = v => (v - m.lo) / (m.hi - m.lo) * 100;
+    return ticks(m.lo, m.hi).map(t => `<div class="tk" style="left:${pos(t.v)}%"><span>${t.label}</span></div>`).join("") +
+      m.items.map(([v, c, l]) => { const p = pos(v), e = p < 12 ? " lo" : p > 88 ? " hi" : "";
+        return `<div class="mk ${c}${e}" style="left:${p}%"><span>${l}</span><i></i></div>`; }).join("");
+  }
+  function breakdownRows(r, L) {
+    const rows = [["Current rank", lpToRank(r.x)], ["Peak rank used", lpToRank(r.y)]];
+    if (!r.peakOnly) {
+      rows.push(["Peak weight (150/z + ¼)", (r.w * 100).toFixed(1) + "%"], ["Blend of current and peak", signed(r.base).replace("+", "")],
+        [`One-trick penalty (q = ${r.q.toFixed(3)})`, signed(-r.penQ), true], [`Role penalty (b = ${r.b})`, signed(-r.penB), true]);
+      if (L.formula === 1) rows.push(["One-trick and role combined", signed(-r.penQB), true]);
+    }
+    rows.push(["SLOPE", lpToRank(r.value)], [`Points (Division ${L.formula} table)`, `${r.pt.pts} pts`]);
+    return rows;
+  }
+
+  let last = null;
   function renderResult() {
     const p = readForm();
-    syncApex("curTier", "curDiv", "curLpLab");
-    syncApex("peakTier", "peakDiv", "peakLpLab");
+    syncApex("curTier", "curDiv", "curLp", "curLpLab");
+    syncApex("peakTier", "peakDiv", "peakLp", "peakLpLab");
     const L = LEAGUES[p.league];
-    const r = evaluate(p, p.league);
     const few = p.games < 200;
     $("peakLegend").textContent = few ? "Peak rank since January 2025" : "Peak rank in 2026";
     $("peakHint").textContent = few ? "Under 200 games in 2026: your SLOPE equals this peak." : "200+ games in 2026: use your 2026 peak.";
-    $("formulaHint").textContent = `Uses the Division ${L.formula} SLOPE formula. TPE limit ${L.tpe[0]}–${L.tpe[1]} points.`;
+    $("formulaHint").textContent = `Uses the Division ${L.formula} SLOPE formula and point table. TPE limit ${L.tpe[0]}–${L.tpe[1]} points.`;
+    const err = validate(p);
+    $("calcErr").textContent = err;
+    $("result").classList.toggle("stale", !!err);
+    if (err) { last = null; renderTeam(); return; }
 
-    let rows;
-    if (r.peakOnly) {
-      rows = `<dt>Peak rank used</dt><dd>${fmt(r.y)} LP</dd><dt>Reason</dt><dd>${p.games} games &lt; 200</dd>`;
-    } else {
-      rows = `<dt>Current rank (x)</dt><dd>${fmt(r.x)} LP</dd>
-        <dt>Peak rank (y)</dt><dd>${fmt(r.y)} LP</dd>
-        <dt>Peak weight (150/z + ¼)</dt><dd>${r.w.toFixed(3)}</dd>
-        <dt>Rank estimate</dt><dd>${fmt(r.base)} LP</dd>
-        <dt>OTP penalty (q = ${r.q.toFixed(3)})</dt><dd>−${fmt(r.penQ)}</dd>
-        <dt>Role penalty (b = ${r.b})</dt><dd>−${fmt(r.penB)}</dd>
-        ${L.formula === 1 ? `<dt>OTP × role penalty</dt><dd>−${fmt(r.penQB)}</dd>` : ""}`;
-    }
+    const r = evaluate(p, p.league);
+    const m = trackModel(r);
+    const rows = breakdownRows(r, L);
     $("result").innerHTML = `
       <div class="eyebrow">Your SLOPE rating · ${esc(L.name)}</div>
       <div class="score">
@@ -793,12 +863,19 @@ footer.foot .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; gap: 8p
         ${pointsBadge(r.pt)}
       </div>
       <div>${pointsNote(r.pt, L)}</div>
-      <dl class="breakdown">${rows}<dt><strong>SLOPE</strong></dt><dd><strong>${fmt(r.value)} LP</strong></dd></dl>`;
+      <div class="track" role="img" aria-label="Current ${esc(lpToRank(r.x))}, peak ${esc(lpToRank(r.y))}, SLOPE ${esc(lpToRank(r.value))}">${trackHtml(m)}</div>
+      <dl class="breakdown">${rows.map(([k, v, pen]) => {
+        const strong = k === "SLOPE";
+        return `<dt>${strong ? "<strong>SLOPE</strong>" : esc(k)}</dt><dd class="${pen && v.startsWith("−") ? "neg" : ""}">${strong ? `<strong>${esc(v)}</strong>` : esc(v)}</dd>`;
+      }).join("")}</dl>
+      ${few ? `<p class="note">With fewer than 200 games, SLOPE equals your peak rank. Champion and role adjustments do not apply.</p>` : ""}`;
+    last = { r, m, rows, L, p };
     store.set("wtl-form", p);
     renderTeam();
   }
 
   // ---------- Team ----------
+  let lastTeam = null;
   const EXAMPLE = [
     { pname: "Example Top", pos: "Top", slot: "starter", academy: true, curTier: "diamond", curDiv: 1, curLp: 20, games: 530, peakTier: "master", peakDiv: 4, peakLp: 210, otp: 40, role: "on" },
     { pname: "Example Jungle", pos: "Jungle", slot: "starter", academy: true, curTier: "master", curDiv: 4, curLp: 160, games: 380, peakTier: "master", peakDiv: 4, peakLp: 340, otp: 35, role: "on" },
@@ -825,7 +902,7 @@ footer.foot .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; gap: 8p
     const lk = $("league").value, L = LEAGUES[lk];
     const ps = teamState.players.map(p => ({ p, r: evaluate(p, lk) }));
     $("exampleTag").hidden = !teamState.example;
-    $("addStarter").disabled = $("addSub").disabled = !teamState.example && teamState.players.length >= 10;
+    $("addStarter").disabled = $("addSub").disabled = !last || (!teamState.example && teamState.players.length >= 10);
 
     if (!ps.length) {
       $("teamBox").innerHTML = `<div class="empty">No players yet. Fill in the form and choose “Add as starter” for each of your five starters.</div>`;
@@ -850,7 +927,8 @@ footer.foot .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; gap: 8p
     const pct = v => Math.min(100, (v / scaleMax) * 100);
     const inRange = tpe >= lo && tpe <= hi;
     $("tpeBox").innerHTML = `
-      <div><div class="eyebrow">TPE (5 starters)</div><div class="big">${tpe}<small> / ${lo}–${hi}</small></div></div>
+      <div><div class="eyebrow">TPE (5 starters)</div><div class="big">${tpe}<small> / ${lo}–${hi}</small></div>
+        ${starters.length ? `<div class="hint">Average SLOPE ${esc(lpToRank(starters.reduce((t, o) => t + o.r.value, 0) / starters.length))}</div>` : ""}</div>
       <div class="meter">
         <div class="meter-track" role="img" aria-label="TPE ${tpe} against limit ${lo} to ${hi}">
           <div class="meter-band" style="left:${pct(lo)}%;width:${pct(hi) - pct(lo)}%"></div>
@@ -879,6 +957,7 @@ footer.foot .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; gap: 8p
       ? `Sub not below their starter’s points: ${badSubs.map(o => `${esc(o.p.pname)} (${esc(o.p.pos)})`).join(", ")} (2.3.2)`
       : "Every sub is below their position’s starter (2.3.2)");
     $("checks").innerHTML = checks.join("");
+    lastTeam = { ps, starters, tpe, L };
   }
 
   $("teamBox").addEventListener("change", e => {
@@ -902,6 +981,123 @@ footer.foot .wrap { padding-block: 24px; display: flex; flex-wrap: wrap; gap: 8p
   $("calcForm").addEventListener("change", renderResult);
   $("calcForm").addEventListener("submit", e => e.preventDefault());
   renderResult();
+
+  // ---------- PNG export (adapted from WD Maverick's SLOPE calculator) ----------
+  const css = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+  async function canvasFonts() {
+    try { await Promise.all(['700 60px "Oswald"', '600 30px "Oswald"', '400 24px "Public Sans"', '600 24px "Public Sans"'].map(f => document.fonts.load(f))); } catch {}
+  }
+  const DISP = '"Oswald", "Arial Narrow", Impact, sans-serif', BODY = '"Public Sans", "Segoe UI", system-ui, sans-serif';
+  let logoImg = null;
+  function loadLogo() {
+    if (logoImg) return Promise.resolve(logoImg);
+    return new Promise(res => { const im = new Image(); im.onload = () => res(logoImg = im); im.onerror = () => res(null); im.src = "assets/wtl-logo.png"; });
+  }
+  function newCanvas(W, H) {
+    const c = document.createElement("canvas"); c.width = W * 2; c.height = H * 2;
+    const g = c.getContext("2d"); g.scale(2, 2); g.textBaseline = "alphabetic";
+    g.fillStyle = css("--navy"); g.fillRect(0, 0, W, H);
+    return { c, g };
+  }
+  async function brandHeader(g, W, title) {
+    g.fillStyle = css("--blue"); g.fillRect(0, 0, W, 112);
+    const logo = await loadLogo();
+    if (logo) g.drawImage(logo, 48, 22, 112, 68);
+    g.fillStyle = "#fff"; g.font = `600 18px ${DISP}`; g.fillText("WTL CHAMPIONSHIP 2026", 184, 50);
+    g.font = `700 36px ${DISP}`; g.fillText(title.toUpperCase(), 184, 90);
+  }
+  function footer(g, W, H) {
+    g.textAlign = "left"; g.fillStyle = css("--grey"); g.font = `400 18px ${BODY}`;
+    g.fillText("Generated " + new Date().toLocaleDateString() + " · muhwu.github.io/wtl-championship-rulebook", 56, H - 36);
+  }
+  async function makePng() {
+    await canvasFonts();
+    const { r, m, rows, L, p } = last, W = 1080, P = 56;
+    const meta = [["Division", L.name], ["Games in 2026", String(p.games)], ["Main champion", p.otp + "%"], ["Role", ROLE_LABEL[p.role]]];
+    const all = meta.concat(rows), rowH = 42, top = 112 + 48 + (p.pname ? 50 : 0), trackH = 150;
+    const H = top + 130 + trackH + all.length * rowH + 100;
+    const { c, g } = newCanvas(W, H);
+    await brandHeader(g, W, "SLOPE evaluation");
+    let y = 112 + 56;
+    if (p.pname) { g.fillStyle = "#fff"; g.font = `600 34px ${DISP}`; g.fillText(p.pname.toUpperCase(), P, y); y += 50; }
+    y += 30; g.fillStyle = "#fff"; g.font = `700 60px ${DISP}`; g.fillText(lpToRank(r.value).toUpperCase(), P, y);
+    g.textAlign = "right"; g.fillStyle = css("--magenta"); g.font = `700 72px ${DISP}`; g.fillText(String(r.pt.pts), W - P, y);
+    g.fillStyle = css("--grey"); g.font = `500 20px ${DISP}`; g.fillText(r.pt.pts === 1 ? "POINT" : "POINTS", W - P, y + 32); g.textAlign = "left";
+    y += 40; g.fillStyle = css("--grey"); g.font = `400 24px ${BODY}`; g.fillText(fmt(r.value) + " LP on the Master = 0 scale", P, y);
+    // track
+    const x0 = P + 30, x1 = W - P - 30, ty = y + 70, X = v => x0 + (v - m.lo) / (m.hi - m.lo) * (x1 - x0);
+    g.strokeStyle = css("--line"); g.lineWidth = 3; g.beginPath(); g.moveTo(x0, ty); g.lineTo(x1, ty); g.stroke();
+    ticks(m.lo, m.hi).forEach(t => {
+      const tx = X(t.v); g.globalAlpha = .6; g.strokeStyle = css("--grey"); g.lineWidth = 2;
+      g.beginPath(); g.moveTo(tx, ty - 14); g.lineTo(tx, ty + 14); g.stroke();
+      g.fillStyle = css("--grey"); g.font = `500 17px ${DISP}`; g.textAlign = "center"; g.fillText(t.label.toUpperCase(), tx, ty - 22); g.globalAlpha = 1;
+    });
+    const pts = m.items.map(([v, cls, label]) => ({ x: X(v), cls, label })).sort((a, b) => a.x - b.x);
+    pts.forEach((pt, i) => { pt.lv = (i && pt.x - pts[i - 1].x < 130) ? pts[i - 1].lv + 1 : 0; });
+    pts.forEach(pt => {
+      const big = pt.cls === "slope";
+      g.fillStyle = big ? css("--magenta") : pt.cls === "peak" ? css("--accent") : css("--grey");
+      g.beginPath(); g.arc(pt.x, ty, big ? 11 : 8, 0, Math.PI * 2); g.fill();
+      g.fillStyle = big ? "#fff" : g.fillStyle; g.font = `${big ? 600 : 500} 20px ${DISP}`;
+      g.textAlign = pt.x < x0 + 50 ? "left" : pt.x > x1 - 50 ? "right" : "center";
+      g.fillText(pt.label.toUpperCase(), pt.x, ty + 38 + pt.lv * 26);
+    });
+    y = ty + trackH - 30;
+    all.forEach(([k, val, pen], i) => {
+      if (i === meta.length) { g.strokeStyle = css("--line"); g.lineWidth = 2; g.beginPath(); g.moveTo(P, y - 26); g.lineTo(W - P, y - 26); g.stroke(); }
+      const strong = k === "SLOPE";
+      g.textAlign = "left"; g.fillStyle = css("--grey"); g.font = `${strong ? 600 : 400} 22px ${BODY}`; g.fillText(k, P, y);
+      g.textAlign = "right"; g.fillStyle = pen && val.startsWith("−") ? css("--warn") : "#fff"; g.fillText(val, W - P, y); y += rowH;
+    });
+    footer(g, W, H);
+    return new Promise(res => c.toBlob(res, "image/png"));
+  }
+  async function makeTeamPng() {
+    await canvasFonts();
+    const { ps, starters, tpe, L } = lastTeam, W = 1080, P = 56, cardH = 132, gap = 14, head = 112 + 150;
+    const H = head + ps.length * (cardH + gap) + 90;
+    const { c, g } = newCanvas(W, H);
+    await brandHeader(g, W, "SLOPE team evaluation");
+    const avg = starters.length ? starters.reduce((t, o) => t + o.r.value, 0) / starters.length : 0;
+    g.fillStyle = css("--grey"); g.font = `500 20px ${DISP}`; g.fillText(L.name.toUpperCase() + " · TPE LIMIT " + L.tpe[0] + "–" + L.tpe[1], P, 112 + 52);
+    g.fillStyle = "#fff"; g.font = `700 40px ${DISP}`; g.fillText(("Average " + (starters.length ? lpToRank(avg) : "—")).toUpperCase(), P, 112 + 104);
+    g.textAlign = "right"; g.fillStyle = css("--magenta"); g.font = `700 44px ${DISP}`; g.fillText("TPE " + tpe, W - P, 112 + 104); g.textAlign = "left";
+    ps.forEach(({ p, r }, i) => {
+      const y = head + i * (cardH + gap), x = P, w = W - 2 * P;
+      g.fillStyle = css("--surface"); g.strokeStyle = css("--line"); g.lineWidth = 2;
+      g.beginPath(); g.roundRect(x, y, w, cardH, 5); g.fill(); g.stroke();
+      g.fillStyle = p.slot === "starter" ? css("--blue") : css("--grey"); g.fillRect(x, y, 6, cardH);
+      g.textAlign = "left"; g.fillStyle = "#fff"; g.font = `600 28px ${DISP}`; g.fillText(`${p.pname} · ${p.pos}`.toUpperCase(), x + 28, y + 44);
+      g.fillStyle = css("--grey"); g.font = `400 20px ${BODY}`;
+      g.fillText(`${p.slot === "starter" ? "Starter" : "Sub"} · ${p.games} games · ${p.otp}% main champion · ${ROLE_LABEL[p.role]}${p.academy ? " · Academy" : ""}`, x + 28, y + 78);
+      g.fillText(`Current ${lpToRank(r.x)}  ·  Peak ${lpToRank(r.y)}`, x + 28, y + 110);
+      g.textAlign = "right"; g.fillStyle = "#fff"; g.font = `600 26px ${DISP}`; g.fillText(lpToRank(r.value).toUpperCase(), x + w - 24, y + 44);
+      g.fillStyle = css("--magenta"); g.font = `700 30px ${DISP}`; g.fillText(r.pt.pts + (r.pt.pts === 1 ? " PT" : " PTS"), x + w - 24, y + 108);
+    });
+    footer(g, W, H);
+    return new Promise(res => c.toBlob(res, "image/png"));
+  }
+  function saveBlob(blob, filename) {
+    const u = URL.createObjectURL(blob), a = document.createElement("a");
+    a.href = u; a.download = filename; document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(() => URL.revokeObjectURL(u), 2000);
+  }
+  $("dlPng").addEventListener("click", async () => {
+    const msg = $("dlMsg");
+    if (!last) { msg.textContent = "Fix the highlighted input first."; return; }
+    msg.textContent = "";
+    try {
+      const safe = (last.p.pname || "result").replace(/[^\w\-]+/g, "_").slice(0, 30);
+      saveBlob(await makePng(), `slope-${safe}.png`); msg.textContent = "Saved.";
+    } catch { msg.textContent = "Couldn’t create the PNG here. Try again or take a screenshot."; }
+  });
+  $("dlTeam").addEventListener("click", async () => {
+    const msg = $("dlTeamMsg");
+    if (!lastTeam || !lastTeam.ps.length) { msg.textContent = "Add at least one player first."; return; }
+    msg.textContent = "";
+    try { saveBlob(await makeTeamPng(), "slope-team.png"); msg.textContent = "Saved."; }
+    catch { msg.textContent = "Couldn’t create the PNG here. Try again or take a screenshot."; }
+  });
 
   // ---------- Tabs ----------
   const TABS = ["rules", "slope", "calculator"];
