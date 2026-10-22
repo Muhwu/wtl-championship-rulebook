@@ -1,0 +1,280 @@
+0.0 Introduction
+The following rules are for the WTL Championship 2026 associated with We Teach League. By participating in the league, players are acknowledging that they have read and understand the rules in their entirety.
+0.1 Out of Game Behavior
+[0.1.1]​ Any harassment or personal attacks or any kind will result in penalties for the player(s) in question depending on the severity of the acts. This includes but is not limited to: bullying, racism, personal insults, and offensive language.
+[0.1.2]​ Disrespectfulness of any kind will not be tolerated).
+[0.1.3]​ Not safe for work content of any kind has no place in the discord.
+[0.1.4]​ Arguing with staff decisions will result in a warning. Inquiring about interpretation or implementation of a rule is allowed, as long as it is not in regards to a punishment that was handed down.
+[0.1.5]​ Team names, team logos, and player names must be appropriate.  Players will be asked by admins to change a team name, a team logo, or player names if they are deemed inappropriate.
+0.2 In Game Behavior
+[0.2.1]​ Emotes that can be muted in-game (e.g., emote wheel, mastery flash, situational emotes for first blood) are allowed to be used.  Dancing and laughing are also allowed.  If bothered by these emotes, players can mute them through their settings (dancing and laughing are muted by muting chat). 
+[0.2.2] ​All chat should only be used in a sportsmanlike manner and when warranted.  E.g., “ggwp,” “glhf”.  Mean-spirited all chat usage may result in game suspensions for the offending player(s).
+[0.2.3]. If any situations come up during game time (eligibility questions, rule violations, unsportsmanlike behavior in the lobby, etc.), do not play the game.  Captains should ping one of the officials on the discord server.
+[0.2.4]​ Whenever a new or reworked champion is released, they will not be available in league matches until one (1) patch after the champion is released.
+[0.2.5]​ In order to participate in an official match for a team, players must be in the discord server and be properly registered on that team. The onus is on the opposing captain to check that the players in their lobby are registered on the approved roster lists.
+[0.2.6] The matches will take place every Friday at 8pm (EST for NA and CET for EU). The captains are free to schedule their matches at another time, but it must be approved by both captains. Teams must be willing to field substitute players if need be. 
+[0.2.7] ​Matches must be played five (5) vs. five (5). If the initial five (5) players for each team are not present at the scheduled match time, see the table below:
+Time Late to Match
+	Punishment
+	5 Minutes
+	Loss of 1st Ban
+	10 Minutes
+	Loss of 1st Two Bans
+	20 Minutes
+	Loss of 1st Game
+	30 Minutes
+	Loss of Whole Match/Series
+	
+
+Please note that captains are encouraged to enforce these punishments to incentivise respect and sportsmanship, but not obligated to do so.
+
+
+1.0 Eligibility & Player Ratings
+1.1 Player Eligibility
+[1.1.1] All players must play on the account that is listed as the player’s main account on the roster sheet (unless given permission otherwise).  
+[1.1.2] Players must report all accounts that are level 30 or higher.
+1.2 Player Ratings
+[1.1.2] Evaluation will be made with our SLOPE system (Standardized Level Of Play Estimation) which is an estimation calculated with many variables including Current rank, Peak rank, Role, amount of games played, champions played, etc… See this file for in depth explanations: SLOPE.pdf
+Here is a website with the integrated code so it’s easy for everyone to calculate their own rating as well as an option to get the full team rating:
+**Pending
+NA - Division 1 (Diamond 4 - Masters 1500LP):
+SLOPE Evaluation
+	Point value
+	Diamond 4 0-99LP
+	1
+	Diamond 3 0-99LP
+	2
+	Diamond 2 0-99LP
+	3
+	Diamond 1 0-99LP
+	4
+	Master 0-124LP
+	5
+	Master 125-249LP
+	6
+	Master 250-374LP
+	7
+	Master 375-499LP
+	8
+	Master 500-624LP
+	9
+	Master 625-749LP
+	10
+	Master 750-874LP
+	11
+	Master 875-999LP
+	12
+	Master 1000-1124LP
+	13
+	Master 1125-1249LP
+	14
+	Master 1250-1374LP
+	15
+	Master 1375-1500LP
+	16
+	
+
+
+
+NA - Division 2 (Emerald 4 - Diamond 1):
+SLOPE Evaluation
+	Point
+	Emerald 4 0-99LP
+	1
+	Emerald 3 0-99LP
+	2
+	Emerald 2 0-99LP
+	3
+	Emerald 1 0-99LP
+	4
+	Diamond 4 0-99LP
+	5
+	Diamond 3 0-99LP
+	6
+	Diamond 2 0-99LP
+	7
+	Diamond 1 0-99LP
+	8
+	
+
+
+
+NA - Division 3 (Silver 4 - Platinum 1)
+SLOPE Evaluation
+	Point
+	Silver 4 0-99LP
+	1
+	Silver 3 0-99LP
+	2
+	Silver 2 0-99LP
+	3
+	Silver 1 0-99LP
+	4
+	Gold 4 0-99LP
+	5
+	Gold 3 0-99LP
+	6
+	Gold 2 0-99LP
+	7
+	Gold 1 0-99LP
+	8
+	Platinum 4 0-99LP
+	9
+	Platinum 3 0-99LP
+	10
+	Platinum 2 0-99LP
+	11
+	Platinum 1 0-99LP
+	12
+	
+
+EU - Division 1 (Emerald 4 - Masters 300LP)
+SLOPE Evaluation
+	Point value
+	Emerald 4 0-99LP
+	1
+	Emerald 3 0-99LP
+	2
+	Emerald 2 0-99LP
+	3
+	Emerald 1 0-99LP
+	4
+	Diamond 4 0-99LP
+	5
+	Diamond 3 0-99LP
+	6
+	Diamond 2 0-99LP
+	7
+	Diamond 1 0-99LP
+	8
+	Master 0-124LP
+	9
+	Master 125-249LP
+	10
+	Master 250-374LP
+	11
+	
+
+EU - Division 2 (Silver 4 - Platinum 1)
+SLOPE Evaluation
+	Point value
+	Silver 4 0-99LP
+	1
+	Silver 3 0-99LP
+	2
+	Silver 2 0-99LP
+	3
+	Silver 1 0-99LP
+	4
+	Gold 4 0-99LP
+	5
+	Gold 3 0-99LP
+	6
+	Gold 2 0-99LP
+	7
+	Gold 1 0-99LP
+	8
+	Platinum 4 0-99LP
+	9
+	Platinum 3 0-99LP
+	10
+	Platinum 2 0-99LP
+	11
+	Platinum 1 0-99LP
+	12
+	
+
+
+
+[1.2.1] All players will receive a numerical point rating according to the table above.  Players may climb throughout the championship without it affecting their point value (unless it is clear that a player was rank-sitting, in which case staff has the discretion to adjust point values upwards).
+[1.2.2] There will be no climbing caps for the duration of the Championship.
+[1.2.3] If we find any player to be manipulating their evaluation in any way (rank sitting, playing on hidden account…), the offending player will be banned from the league and the captain will receive a formal warning or be refused entry in the league altogether.
+[1.2.4] Each team may have up to one player below the point bracket who will be worth 1 point. (This is to accommodate any team that is already made prior to the event, but isn’t recommended if you are building a team for the event.)
+2.0 Divisions
+2.1 Accepted Teams
+[2.1.1] All teams must consist of at least 5 players. Teams may have a maximum of 10 player slots. A player registered twice (for 2 different roles) will take 2 slots
+[2.1.2] The Championship will accept at most 8 total teams per division.
+2.2 Evaluating Teams’ Point Evaluations
+[2.2.1] All accepted players will be assigned a point value based on the stipulations outlined in section 1.2. 
+[2.2.2]  A team’s point evaluation (TPE) is determined by adding the assigned point values of the 5 starters on the roster, known for the rest of this document as TPE players.
+[2.2.3] A player cannot change his role at any point post-registration. However, a player can be registered twice in a team (starter Top, substitute ADC for example) and will receive 2 SLOPE evaluations.
+2.3 Teams’ Point Evaluation limits
+[2.3.1] TPE limits are as follows : 
+        NA - Division 1: 28-38 points
+        NA - Division 2: 18-25 points
+        NA - Division 3: 28-38 points
+        EU - Division 2: 25-35 points
+        EU - Division 3: 28-38
+[2.3.1.1]This is a soft cap and the league holds the right to accept or deny any team with the goal to have as many teams competing while holding our standards regarding competitive integrity.
+[2.3.2] Substitutes must be below the point evaluation of their starting player.
+[2.3.3] 4 out of the 5 starting players of each team must be a member of the WTL academies. The remaining one may be a non-members. This rule will keep being applied for the full duration of the event.
+3.0 Roster Changes
+3.1 Mid-Match substitutions and Roster Announcements
+[3.1.1] Substitute players already on a team’s roster are allowed to play in any given game. But may be given a ban penalty (see [3.1.2.3]).
+[3.1.2] Captains should confirm what their roster will be at least 24 hours in advance and post it in the roster announcement channel.
+[3.1.2.1] If a team plans on making substitutions during a match, the sub needs to be on the announced roster and it must be announced in which games they will be playing in the announcement mentioned in [3.1.2]. (see [3.1.2.3])
+[3.1.2.2] The announced roster must be between 5 and 7 players.
+[3.1.2.3] If any last minute change must be made, the team may change it, but must give 10 additional minutes to the enemy team to prepare and will lose two bans during the first ban phase for all games in which the roster isn’t what was announced 24 hours before the game.
+3.2 Other Roster Stipulations
+[3.2.1] If a player is removed from a team for rule violations or any other reason, that player’s team will have 1 week from the league’s announcement of the ruling to fill that player's spot on that team’s roster. The new player must be of equal or lower point value.
+[3.2.2] An individual player is only allowed to be registered on 1 roster at a time as a starter and may be a sub in another team from another division.
+4.0 Pauses, Disconnects, Remakes, Forfeits
+4.1 Pauses and Breaks
+[4.1.1] If a player disconnects, or if any serious issue occurs, the game can be paused for up to 10 minutes by each team per individual game.  If the pause surpasses 10 total minutes of pause time from a singular team, the game must unpause and be played out or the offending team must forfeit.
+[4.1.2] Teams may not pause during a fight or right before a fight will begin. Both captains should confirm they are ready before the game is unpaused.
+[4.1.2.1] A ‘’fight’’ is defined as a sequence in the game where at least 2 players are in active combat with one another. The phrase ‘’before a fight’’ refers to an instance where it is clear that a fight will break out within a few seconds (ex: A jungler starting a gank or a scuttle crab contest)
+[4.1.3] For games after the first game of a series, all players should be in the lobby and the draft should start no later than 15 minutes following the conclusion of the previous game. Games should start no more than 5 minutes after the draft finishes.
+4.2 Disconnects
+[4.2.1] If teams run into unfixable problems, such as a power or internet outage, the captain should contact the other captain immediately.  If the issue is deemed fixable, the game will not be remade or postponed.  The /pause function is approved for use during these situations.  If the other captain is in agreement, teams may surpass their originally allotted 10 minutes of pause time.
+4.3 Remakes
+[4.3.1] Unless both parties are experiencing massive server lag, remakes will not be given.  Natural disasters or life-threatening situations are the only other instances where a remake may be considered.  Decisions will be made by the admin team once they understand the situation.
+[4.3.2] Remakes are not permitted if a player incorrectly selects their runes or summoner spells.
+5.0 Format of Play
+5.1 Voice Channels
+[5.1.1] All registered players must be in the Discord server with the proper naming convention.
+[5.1.2] Teams must play in their designated Discord voice channel for all matches. The voice channels are locked to just players.
+5.2 Format of Games
+[5.2.1] All matches should be played in custom lobbies with the abbreviations as the name and “WTL123” as the password. (ex: WD vs MRS, pw:WTL123)
+[5.2.2] All matches are played in a best-of-3 format, except for finals, which will be a best-of-5
+[5.2.4] All the lobbies must be open to any player, coach, manager or team owner that wishes to spectate the match.
+[5.2.5] Any member of the league may stream and cast the game on twitch, but must give their twitch link in the appropriate channel in the discord server.
+5.3 Draft
+[5.3.1]  All matches will use the “Fearless” draft format and must be done  in Drafter.lol
+[5.3.1.1] After the draft is completed, each team must specify the role of each champion during the role confirmation phase (in Drafter.lol).
+[5.3.2] In the game lobby, all players must line up in the standard order that follows the roles they intend to play before starting the draft.
+* Top
+* Jungle
+* Mid
+* Bottom
+* Support
+5.4 Side Selection
+[5.4.1] Side selection is chosen through a coin flip. Both captains shall go in the coin flip channel where one captain will flip a coin on this website or simply on google. The captain that won the coin flip can choose between Red or Blue side. All games after the first are the loser's choice: the team that lost the most recent game has side selection in the next game.
+[5.4.2] In semi-finals, side selection is chosen by coin flip as well (see [5.4.1]), but the team that has a 3W-0L record in the Knockout stage will have automatic side selection as well as opponent choice.
+[5.4.1.1] For finals, side selection is decided by a coin flip (see [5.4.1])
+[5.4.3] In the playoffs, the team with side selection of the first game must communicate their decision at least twenty four (24) hours prior to the start of the match with their roster. If this team does not decide on a side by this time, the side selection will be decided like in regular season with a coin flip.
+5.5 Schedules
+[5.5.1] Every week, each team will have 1 match scheduled. 
+[5.5.2]These matches must be played within the week they are assigned (Between Monday and Sunday).
+[5.5.3]Weekly matchups are distributed prior to the championship starting.
+[5.5.4]The default time will be Friday 8 pm (EST for NA and CET for EU)
+[5.5.4.1] If both captains can find a time that works better for them, they are free to change the date and time of their game as long as it’s in the same week. If an agreement can’t be reached, the game has to be played on Friday at 8pm.
+
+6.0 Championship Format
+6.1 Swiss Stage
+[6.1.1] The initial matchups are decided with a draw.
+[6.1.2] After the first week, each team will be placed in a bracket according the the results of the precedent week (1-0 bracket and 0-1 bracket)
+[6.1.3] This process will be repeated an additional time for 3 total matches.
+[6.1.4] After those 3 matches, each team that won at least 2 games (4 teams) will move on to the semi-finals, and the team that went 3-0 will get side selection and opponent choice for semi-finals.
+
+6.2 Semi-Finals
+[6.2.1] The team that went 3-0 in Swiss will get to choose their opponent and the other 2 teams will play against each other. (see [5.4.2])
+[6.2.2] The 3-0 team will have to let the other team know who their opponent choice is by Monday 8pm (EST/CET) of the semi-finals week at the latest and their side selection 24 hours in advance.
+
+6.3 Finals
+[6.3.1] Finals will be played in a Best-of-5 format between the 2 winning teams of semi-finals
+[6.3.2] If both teams agree, they may play a Best-of-3 instead, but if one of the teams wishes to play a Best-of-5, the other team must comply.
+
+
+May the best team reap the glory and the rewards, enjoy the event!
+PDF: SLOPE.pdf
+Code: Untitled0.ipynb
